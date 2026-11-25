@@ -1,0 +1,146 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://scenes/main/stage1_test_world.gd" id="1_world"]
+[ext_resource type="PackedScene" path="res://characters/vlado/vlado_character.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://ui/mobile_controls.tscn" id="3_mobile"]
+[ext_resource type="PackedScene" path="res://ui/debug_hud.tscn" id="4_hud"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_mnt"]
+sky_top_color = Color(0.24, 0.31, 0.39, 1)
+sky_horizon_color = Color(0.49, 0.53, 0.56, 1)
+ground_bottom_color = Color(0.14, 0.14, 0.13, 1)
+ground_horizon_color = Color(0.32, 0.34, 0.33, 1)
+sun_angle_max = 22.0
+
+[sub_resource type="Sky" id="Sky_mnt"]
+sky_material = SubResource("SkyMat_mnt")
+
+[sub_resource type="Environment" id="Env_mnt"]
+background_mode = 2
+sky = SubResource("Sky_mnt")
+ambient_light_source = 3
+ambient_light_energy = 0.55
+tonemap_mode = 3
+tonemap_white = 1.1
+fog_enabled = true
+fog_light_color = Color(0.55, 0.59, 0.63, 1)
+fog_density = 0.008
+
+[sub_resource type="StandardMaterial3D" id="Mat_Ground"]
+albedo_color = Color(0.24, 0.25, 0.20, 1)
+roughness = 0.92
+
+[sub_resource type="BoxMesh" id="Mesh_Ground"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="BoxShape3D" id="Col_Ground"]
+size = Vector3(80, 1, 80)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Stone"]
+albedo_color = Color(0.36, 0.36, 0.34, 1)
+roughness = 0.88
+
+[sub_resource type="BoxMesh" id="Mesh_Ramp"]
+size = Vector3(4.5, 0.4, 9.0)
+
+[sub_resource type="BoxShape3D" id="Col_Ramp"]
+size = Vector3(4.5, 0.4, 9.0)
+
+[sub_resource type="BoxMesh" id="Mesh_Wall"]
+size = Vector3(1.2, 3.2, 7.0)
+
+[sub_resource type="BoxShape3D" id="Col_Wall"]
+size = Vector3(1.2, 3.2, 7.0)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Timber"]
+albedo_color = Color(0.28, 0.21, 0.15, 1)
+roughness = 0.90
+
+[sub_resource type="BoxMesh" id="Mesh_Block"]
+size = Vector3(1.8, 1.4, 1.8)
+
+[sub_resource type="BoxShape3D" id="Col_Block"]
+size = Vector3(1.8, 1.4, 1.8)
+
+[node name="Stage1TestWorld" type="Node3D"]
+script = ExtResource("1_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_mnt")
+
+[node name="SunLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.819152, -0.352671, 0.452427, 0, 0.788011, 0.615661, -0.573576, -0.50348, 0.645501, 0, 12, 0)
+light_color = Color(1, 0.94, 0.86, 1)
+light_energy = 1.45
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("Mesh_Ground")
+surface_material_override/0 = SubResource("Mat_Ground")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("Col_Ground")
+
+[node name="Slope10Deg" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 6.5, 0.58, -10.2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Slope10Deg"]
+mesh = SubResource("Mesh_Ramp")
+surface_material_override/0 = SubResource("Mat_Stone")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slope10Deg"]
+shape = SubResource("Col_Ramp")
+
+[node name="Slope22Deg" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.927184, -0.374607, 0, 0.374607, 0.927184, 0, 1.50, -10.2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Slope22Deg"]
+mesh = SubResource("Mesh_Ramp")
+surface_material_override/0 = SubResource("Mat_Stone")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slope22Deg"]
+shape = SubResource("Col_Ramp")
+
+[node name="Slope35Deg" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.819152, -0.573576, 0, 0.573576, 0.819152, -6.5, 2.42, -10.2)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Slope35Deg"]
+mesh = SubResource("Mesh_Ramp")
+surface_material_override/0 = SubResource("Mat_Stone")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Slope35Deg"]
+shape = SubResource("Col_Ramp")
+
+[node name="StoneWall" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.0, 1.6, -2.0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StoneWall"]
+mesh = SubResource("Mesh_Wall")
+surface_material_override/0 = SubResource("Mat_Stone")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StoneWall"]
+shape = SubResource("Col_Wall")
+
+[node name="TimberCrateA" type="StaticBody3D" parent="."]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, 4.0, 0.7, -3.5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TimberCrateA"]
+mesh = SubResource("Mesh_Block")
+surface_material_override/0 = SubResource("Mat_Timber")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TimberCrateA"]
+shape = SubResource("Col_Block")
+
+[node name="VladoPlayer" parent="." instance=ExtResource("2_player")]
+
+[node name="MobileControls" parent="." instance=ExtResource("3_mobile")]
+
+[node name="DebugHUD" parent="." instance=ExtResource("4_hud")]
+player_path = NodePath("../VladoPlayer")
+camera_rig_path = NodePath("../VladoPlayer/CameraRig")
+animator_path = NodePath("../VladoPlayer/PlayerAnimator")
+mobile_controls_path = NodePath("../MobileControls")

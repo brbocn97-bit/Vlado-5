@@ -1,0 +1,17 @@
+[console:log] Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+[console:log] OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL
+[console:log] Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support.
+[console:log] [Quality] tier=MEDIUM foliage=200m shadows=45m msaa=0 fps=60
+[console:log] [Vegetation] trava = proceduralni cross-quad (8 tris), GLB trava iskljucena radi FPS
+[console:log] [Missions] 3 misija, 9 ciljeva
+[console:log] [Stage33] pickup ppsh41 at (-5.9, 2.192473, 7.6) (y=2.14)
+[console:log] [Stage33] pickup mauser_98 at (1.8, 1.649539, 7.6) (y=1.60)
+[console:log] [Stage33] arsenal online — 31 weapons defined, 2 owned
+[console:log] [Stage4] waterfall at x=-129 z=268 drop=10.5 m width=3.8 m
+[console:log] [Stage4] waterfall at x=-222 z=392 drop=3.0 m width=2.6 m
+[console:log] [Stage4] outer forest: 6907 trees in 64 buckets
+[console:log] [Stage4] distance culling applied to 928 small props (far=220m)
+[console:log] [Quality] vegetation ranges set on 168 MultiMesh nodes (grass 78m, shrubs 100m, ostalo 200m)
+[console:log] [Stage4] world mounted: 6 regions, 7 clues catalogued
+[console:warning] The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio
+[console:warning] The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page. https://developer.chrome.com/blog/autoplay/#web_audio

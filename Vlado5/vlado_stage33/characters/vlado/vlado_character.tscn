@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://dsbt5inom4n4v" path="res://player/player_controller.gd" id="1_ctrl"]
+[ext_resource type="PackedScene" path="res://assets/characters/vlado/Vlado_Sipcic_Final.glb" id="2_vlado"]
+[ext_resource type="Script" uid="uid://b3a7gyy3d2ukp" path="res://player/player_camera.gd" id="3_cam"]
+[ext_resource type="Script" uid="uid://dsqtxtbfshjr0" path="res://player/player_animator.gd" id="4_anim"]
+[ext_resource type="Script" uid="uid://47qxpdpm887s" path="res://scripts/weapon_controller.gd" id="5_weap"]
+[ext_resource type="Script" uid="uid://hrwj2d54fc7w" path="res://characters/vlado/first_person_rig.gd" id="6_fprig"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vlado"]
+radius = 0.32
+height = 1.84
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_cam"]
+radius = 0.16
+
+[node name="VladoPlayer" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+script = ExtResource("1_ctrl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.92, 0)
+shape = SubResource("CapsuleShape3D_vlado")
+
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="VladoModel" parent="VisualRoot" instance=ExtResource("2_vlado")]
+
+[node name="CameraRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
+script = ExtResource("3_cam")
+
+[node name="YawPivot" type="Node3D" parent="CameraRig"]
+
+[node name="PitchPivot" type="Node3D" parent="CameraRig/YawPivot"]
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraRig/YawPivot/PitchPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.32, 0, 0)
+collision_mask = 1
+shape = SubResource("SphereShape3D_cam")
+spring_length = 3.15
+margin = 0.22
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/YawPivot/PitchPivot/SpringArm3D"]
+fov = 52.0
+current = true
+
+[node name="PlayerAnimator" type="Node" parent="."]
+script = ExtResource("4_anim")
+
+[node name="WeaponController" type="Node" parent="."]
+script = ExtResource("5_weap")
+
+[node name="FirstPersonRig" type="Node3D" parent="."]
+script = ExtResource("6_fprig")

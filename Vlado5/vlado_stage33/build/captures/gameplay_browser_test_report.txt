@@ -1,0 +1,51 @@
+VLADO 5 Browser Gameplay Test
+Date: 2026-11-24
+Build: build/web_review
+Godot: 4.7.2
+
+Status: DJELOMIČNO RADI
+
+Browser loading:
+- HTTP build entry point responded successfully.
+- index.html, index.wasm, and index.pck were present and were requested from the server.
+- The Godot splash/loading screen reached the gameplay canvas.
+- A real 1280x720 gameplay export was previously captured and remains in visual_review_final_1280x720.png.
+- The current browser reload produced visible gameplay and an active Godot canvas at 540x657.
+- The actual gameplay view showed the player, village/house, terrain, grass, trees and HUD controls.
+
+Input test dispatched:
+- W movement
+- Shift sprint
+- 1 equip/holster
+- V aim
+- F fire
+- R reload
+- Space jump
+- C crouch
+- WASD movement directions
+
+Verified directly:
+- Godot Web build reached the real scene.
+- The character and camera were rendered.
+- The HUD and weapon panel were rendered.
+- Canvas remained active after input dispatch.
+- No JS page error or network 404 was observed in the successful prior browser run.
+
+Not independently verified:
+- Exact character displacement for every direction.
+- Sprint exhaustion and stamina animation.
+- Jump/crouch height changes.
+- Weapon draw/aim/fire/reload state transitions in the viewport.
+- Mission-object interaction and target hit registration.
+- Samsung Galaxy S25 Ultra performance.
+
+Concrete browser issue:
+- Repeated Chromium WebGL warnings: "INVALID_ENUM: compressedTexImage2D: invalid format".
+- These indicate compatibility problems for some exported/compressed texture formats in the
+  software WebGL renderer. This should be investigated by testing ASTC/ETC2/Vulkan
+  texture conversion for the Web target, before any gameplay-file changes.
+- Browser loading was slow because the scene is 76 MB PCK plus 38 MB WASM and ran through
+  software WebGL in Codespaces.
+
+No gameplay, model, animation, scene or mission files were changed during this test.
+No APK was created.

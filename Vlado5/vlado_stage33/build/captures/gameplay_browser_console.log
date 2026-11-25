@@ -1,0 +1,10 @@
+Browser console evidence:
+[info] Godot Engine Web build reached the gameplay canvas.
+[warning] Chromium WebGL: INVALID_ENUM: compressedTexImage2D: invalid format
+[warning] Some ETC/ASTC-derived texture formats are not accepted by the software WebGL renderer.
+[warning] index.wasm and index.pck request aborts appeared during the browser reload while the session was interrupted.
+
+No JavaScript exception or pageerror was observed in the successful browser run.
+No HTTP 404 was observed for index.html; asset loading may be slow due to build size.
+
+Samsung Galaxy S25 Ultra: not tested. adb is unavailable in this environment.

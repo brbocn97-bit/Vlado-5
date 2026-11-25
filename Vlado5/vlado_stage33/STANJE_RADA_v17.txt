@@ -1,0 +1,125 @@
+VLADO ŠIPČIĆ: THE LAST OUTLAW — v17
+==========================================================
+STANJE RADA — v17
+Datum: 11.11.2026.
+Osnova: vlado_stage33_v16.zip
+SHA-256 v16 (verifikovan): ee77b71ae4223d9a19988c4fb2ac030b3ff6faad914c979e492807c2fdea6ad6
+==========================================================
+
+ŠTA v17 MIJENJA — 6 FAJLOVA
+----------------------------------------------------------
+
+1) player/player_animator.gd
+   GRUPA A — M48 više ne nestaje
+   · Dodato: _rifle_selected, _rifle_owned
+   · Dodato: set_rifle_selected(bool), set_rifle_owned(bool)
+   · _update_weapon_mount() sada postavlja visible = _rifle_owned (nikad false)
+   · Puška je u RUKAMA samo ako je izabrana I equipped; inače je NA LEĐIMA
+
+2) stage33/weapon_arsenal.gd
+   GRUPA A — uklonjeno skrivanje M48
+   · UKLONJENA funkcija _set_skinned_rifle_visible()
+   · show_weapon() zove _animator_ref().set_rifle_selected(slot == SLOT_M48)
+   GRUPA B — oružje u desnu ruku
+   · Nova konstanta HAND_BONE := "RightHand"
+   · _mount_root_for_weapon() kači na RightHand (kost 27) umjesto WeaponMount (53)
+   · mount_pos: 0.66/0.62 → 0.04, 0.02, -0.06
+
+3) stage33/weapon_pickup.gd
+   GRUPA C — oružje leži ravno na terenu
+   · UKLONJENO postolje (CylinderMesh) — crni "štapići" sa screenshota
+   · Nova _lay_flat_rotation(): najduža osa → vodoravno
+     (v16 heuristika visina>duzina*1.7 NIKAD nije obarala oružje)
+   · AABB se mjeri POSLIJE skaliranja (v16 mjerio prije)
+   · Dno modela spušteno na y = 0
+   · Prsten 0.34–0.44 (bilo 0.36–0.48)
+   · Prompt: "[F] Podigni MG42" → "UZMI"
+   · Prompt drži SAMO _process (prije su ga dvije funkcije pregazile)
+
+4) stage33/stage33_bootstrap.gd
+   GRUPA E — jedan pickup za testiranje (bio 2 na 1.8 m)
+
+5) ui/inventory_bag.gd
+   GRUPA D — torba je IKONA
+   · Nova _make_bag_icon(96): crta kožnu torbu u Image, bez vanjskih fajlova
+   · Dugme: text = "" , icon = ikona
+   · Panel i lista oružja NEDIRNUTI (već rade)
+
+6) ui/debug_hud.gd
+   GRUPA E — visina iznad tla
+   · Pos prikazuje "tlo+X.XX" umjesto sirove svjetske Y
+   · Nova _terrain_data_ref()
+
+==========================================================
+MJERENJA — IZ POKRENUTE IGRE (Godot 4.7.2, headless)
+==========================================================
+26 provjera, 26 prošlo, 0 palo, 0 SCRIPT ERROR
+
+M48:
+  start              vidljiva = true     Y 0.56..1.57 (iznad stopala)
+  MG42 aktivan       vidljiva = TRUE      Y 0.56..1.57   ← NE NESTAJE
+  MP40 aktivan       vidljiva = TRUE
+  vraćen na M48      vidljiva = true     Y 0.56..1.57
+
+ORUŽJE U RUCI (prije: 1.35 m IZNAD GLAVE):
+  MP40   0.55..1.46 iznad stopala   (glava 1.83)   na RightHand
+  MG42   0.56..1.17 iznad stopala   (glava 1.83)   na RightHand
+
+PICKUP:
+  broj pickupa            1
+  dno modela              0.050 m iznad terena  (zadato +0.05)
+  vodoravno               DA (visina 0.31 < dužina 0.65)
+  prstenova               1
+  postolja/štapića        0
+
+PROMPT:            "UZMI"  (nema "[F]", nema "Podigni")
+TORBA:             dugme ima ikonu, tekst prazan
+HUD:               prikazuje "tlo+X.XX"
+
+NEMA DUPLIKATA: Rifle_BoltAction TPS=1 + FPS=1 (FPS SubViewport, očekivano)
+
+==========================================================
+INSTALACIJA
+==========================================================
+1. Zatvori Godot na telefonu
+2. /storage/emulated/0/Igrica vlado/projekt3/vlado4
+3. Obriši SAMO fasciklu ".godot"  (s tačkom! NIKAD project.godot)
+4. Raspakuj POPRAVKA_v17.zip U vlado4, overwrite = YES
+5. Otvori Godot → otvori projekat iz liste
+6. Sačekaj import → igraj
+
+==========================================================
+ŠTA TESTIRATI
+==========================================================
+[ ] M48 u rukama na startu
+[ ] Uzmi MP40 → M48 ostaje na leđima (NE nestaje)
+[ ] MP40 u DESNOJ RUCI, na visini grudi (ne iznad glave)
+[ ] Prebaci na MG42 → i on u desnoj ruci
+[ ] Vrati na M48 → u rukama
+[ ] Pickup leži RAVNO na terenu, bez crnih štapića
+[ ] Jedan narandžast prsten
+[ ] Prompt piše samo "UZMI"
+[ ] Torba je IKONA, klik otvara listu oružja
+[ ] HUD piše "tlo+0.00" kad stojiš na ravnom
+[ ] FPS 60
+
+==========================================================
+NE DIRANO
+==========================================================
+Vlado_Sipcic_Final.glb, maschinengewehr_mg_42.glb,
+mauser_98_sporting.glb, mp40.glb
+animations/vlado_locomotion.tres (Stage 2.1)
+terrain/*, vegetation/*, shaders/vegetation_foliage.gdshader
+scripts/weapon_controller.gd (M48 Stage 3.2)
+stage4/* (31 skripta)
+stage33/arsenal_hud.gd
+
+==========================================================
+POZNATO — NIJE POPRAVLJENO U OVOM KRUGU
+==========================================================
+· Trava još ima crne vrhove (rekao si: ne diraj travu u ovoj fazi)
+· Dva pickupa — vraćaju se kad potvrdiš da jedan radi
+· Terenska terasa (naselje na 2 m) — namjerno, nije greška
+· FPS rig ima svoju kopiju M48 u SubViewportu — odvojen render,
+  nije duplikat u svijetu
+==========================================================

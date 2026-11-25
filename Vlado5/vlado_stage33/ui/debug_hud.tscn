@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/debug_hud.gd" id="1_dh"]
+
+[node name="DebugHUD" type="CanvasLayer"]
+script = ExtResource("1_dh")
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 650.0
+offset_bottom = 166.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TelemetryLabel" type="Label" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Loading Montenegro..."
+
+[node name="ControlsRow" type="HBoxContainer" parent="Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="QualityButton" type="Button" parent="Panel/Margin/VBox/ControlsRow"]
+layout_mode = 2
+text = "Quality: S25 Ultra High"
+
+[node name="TimeButton" type="Button" parent="Panel/Margin/VBox/ControlsRow"]
+layout_mode = 2
+text = "Time: Morning"
+
+[node name="CamInButton" type="Button" parent="Panel/Margin/VBox/ControlsRow"]
+layout_mode = 2
+text = "Cam -"
+
+[node name="CamOutButton" type="Button" parent="Panel/Margin/VBox/ControlsRow"]
+layout_mode = 2
+text = "Cam +"
+
+[node name="ShoulderButton" type="Button" parent="Panel/Margin/VBox/ControlsRow"]
+layout_mode = 2
+text = "Shldr: R"

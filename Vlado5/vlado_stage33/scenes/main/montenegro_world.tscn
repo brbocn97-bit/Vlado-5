@@ -1,0 +1,97 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scenes/main/montenegro_world.gd" id="1_mw"]
+[ext_resource type="Script" path="res://terrain/montenegro_terrain.gd" id="2_ter"]
+[ext_resource type="Script" path="res://environment/water_system.gd" id="3_wat"]
+[ext_resource type="Script" path="res://environment/rock_formations.gd" id="4_roc"]
+[ext_resource type="Script" path="res://buildings/montenegro_settlement.gd" id="5_set"]
+[ext_resource type="Script" path="res://vegetation/montenegro_vegetation.gd" id="6_veg"]
+[ext_resource type="Script" path="res://environment/time_of_day_controller.gd" id="7_tod"]
+[ext_resource type="PackedScene" path="res://characters/vlado/vlado_character.tscn" id="8_pla"]
+[ext_resource type="PackedScene" path="res://ui/mobile_controls.tscn" id="9_mob"]
+[ext_resource type="PackedScene" path="res://ui/debug_hud.tscn" id="10_hud"]
+[ext_resource type="Script" path="res://stage33/stage33_bootstrap.gd" id="11_s33"]
+[ext_resource type="Script" path="res://stage4/stage4_bootstrap.gd" id="12_s4"]
+[ext_resource type="Script" path="res://ui/inventory_bag.gd" id="13_bag"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_m2"]
+sky_top_color = Color(0.28, 0.42, 0.56, 1)
+sky_horizon_color = Color(0.66, 0.72, 0.75, 1)
+ground_bottom_color = Color(0.11, 0.12, 0.11, 1)
+ground_horizon_color = Color(0.42, 0.46, 0.47, 1)
+sun_angle_max = 18.0
+sun_curve = 0.14
+
+[sub_resource type="Sky" id="Sky_m2"]
+sky_material = SubResource("SkyMat_m2")
+
+[sub_resource type="Environment" id="Env_m2"]
+background_mode = 2
+sky = SubResource("Sky_m2")
+ambient_light_source = 3
+ambient_light_energy = 0.65
+tonemap_mode = 3
+tonemap_white = 1.1
+fog_enabled = true
+fog_light_color = Color(0.62, 0.68, 0.72, 1)
+fog_density = 0.0038
+fog_sky_affect = 0.68
+fog_aerial_perspective = 0.62
+
+[node name="MontenegroWorld" type="Node3D"]
+script = ExtResource("1_mw")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_m2")
+
+[node name="SunLight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.321394, 0.383022, 0, 0.766044, 0.642788, -0.5, -0.55667, 0.663414, 0, 40, 0)
+light_color = Color(0.98, 0.94, 0.88, 1)
+light_energy = 1.38
+shadow_enabled = true
+directional_shadow_max_distance = 105.0
+
+[node name="MontenegroTerrain" type="Node3D" parent="."]
+script = ExtResource("2_ter")
+
+[node name="WaterSystem" type="Node3D" parent="."]
+script = ExtResource("3_wat")
+
+[node name="RockFormations" type="Node3D" parent="."]
+script = ExtResource("4_roc")
+
+[node name="MontenegroSettlement" type="Node3D" parent="."]
+script = ExtResource("5_set")
+
+[node name="MontenegroVegetation" type="Node3D" parent="."]
+script = ExtResource("6_veg")
+
+[node name="TimeOfDayController" type="Node" parent="."]
+script = ExtResource("7_tod")
+
+[node name="VladoPlayer" parent="." instance=ExtResource("8_pla")]
+
+[node name="MobileControls" parent="." instance=ExtResource("9_mob")]
+
+[node name="DebugHUD" parent="." instance=ExtResource("10_hud")]
+player_path = NodePath("../VladoPlayer")
+camera_rig_path = NodePath("../VladoPlayer/CameraRig")
+animator_path = NodePath("../VladoPlayer/PlayerAnimator")
+mobile_controls_path = NodePath("../MobileControls")
+time_controller_path = NodePath("../TimeOfDayController")
+vegetation_path = NodePath("../MontenegroVegetation")
+
+[node name="Stage33Bootstrap" type="Node" parent="."]
+script = ExtResource("11_s33")
+debug_pickups = true
+debug_fps_rot = false
+swap_key = 81
+reload_key = 82
+
+[node name="Stage4Bootstrap" type="Node" parent="."]
+script = ExtResource("12_s4")
+auto_start = true
+spawn_region_override = ""
+
+[node name="InventoryBag" type="CanvasLayer" parent="."]
+script = ExtResource("13_bag")

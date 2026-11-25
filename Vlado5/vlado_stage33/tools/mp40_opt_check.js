@@ -1,0 +1,21 @@
+const { chromium } = require('/home/user/.tools/node_modules/playwright-core');
+const OUT = '/home/user/vlado_stage33/build/captures';
+(async () => {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'] });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  page.on('console', m => { const t=m.text(); if (/Stage33\]/.test(t)) console.log('[page]', t.slice(0,140)); });
+  await page.goto('http://127.0.0.1:8124/index.html', { waitUntil: 'load', timeout: 120000 });
+  await page.waitForSelector('canvas', { timeout: 120000 });
+  await page.waitForTimeout(80000);
+  await page.mouse.click(640, 300);
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: OUT + '/s0_spawn.png', timeout: 240000 });
+  await page.keyboard.press('f');
+  await page.waitForTimeout(6000);
+  await page.screenshot({ path: OUT + '/s1_mp40_tps.png', timeout: 240000 });
+  await page.keyboard.press('e');
+  await page.waitForTimeout(8000);
+  await page.screenshot({ path: OUT + '/s2_mp40_fps.png', timeout: 240000 });
+  console.log('SHOTS DONE');
+  await browser.close();
+})().catch(e => { console.error('FATAL', e.message.slice(0,200)); process.exit(1); });

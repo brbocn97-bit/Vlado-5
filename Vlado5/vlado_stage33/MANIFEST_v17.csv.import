@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dehdrq7c7nr0o"
+
+[deps]
+
+files=["res://MANIFEST_v17.bajtova.translation", "res://MANIFEST_v17.sha256.translation"]
+
+source_file="res://MANIFEST_v17.csv"
+dest_files=["res://MANIFEST_v17.bajtova.translation", "res://MANIFEST_v17.sha256.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
