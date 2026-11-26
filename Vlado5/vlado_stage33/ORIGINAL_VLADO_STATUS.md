@@ -35,3 +35,17 @@ The original GLB and `.blend` were copied byte-for-byte from `Vlado_Sipcic_Godot
 | Roll/turn | idle/run | neutral fallback; custom missing | yes |
 
 No bind-pose or bone-retarget operation was applied to the original 44-bone rig.
+
+## Phase 3 locomotion verification
+
+Headless `phase9_locomotion_test.gd` passed on 2026-11-26:
+
+- Grounded physics: passed
+- Walking: 1.65 m/s
+- Running: 4.35 m/s
+- Sprinting: 6.40 m/s
+- Crouch walking: 1.35 m/s
+- Jump air state: passed
+- Landing state: passed
+
+`bad=0` is a locomotion-logic result only. It is not a visual pose or phone approval.

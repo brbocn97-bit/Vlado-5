@@ -175,6 +175,17 @@ func _setup_animation_tree() -> void:
 	sm.add_transition("Start", "Idle", tr_start)
 
 	var grounded_states := ["Idle", "Walking", "Running", "Sprinting", "CrouchIdle", "CrouchWalk"]
+	if state_to_clip.has("ArmedJump"):
+		var jump_tr := AnimationNodeStateMachineTransition.new()
+		jump_tr.xfade_time = 0.08
+		for g in grounded_states:
+			sm.add_transition(g, "ArmedJump", jump_tr)
+		var armed_landing_tr := AnimationNodeStateMachineTransition.new()
+		armed_landing_tr.xfade_time = 0.12
+		sm.add_transition("ArmedJump", "Landing", armed_landing_tr)
+		var landing_armed_tr := AnimationNodeStateMachineTransition.new()
+		landing_armed_tr.xfade_time = 0.12
+		sm.add_transition("Landing", "ArmedJump", landing_armed_tr)
 	var combat_states := ["PistolIdle","PistolAim","PistolFire","PistolReload","PistolWalk","PistolRun","PistolEquip","PistolHolster","RifleIdle","RifleAim","RifleWalk","RifleRun","HeavyIdle","HeavyWalk","RifleEquip","RifleHolster","RifleFire","HeavyFire","RifleReload","GrenadeIdle","GrenadeThrow","MeleeIdle","MeleeAttack"]
 	var all_grounded := grounded_states.duplicate()
 	for cs in combat_states:
@@ -269,11 +280,9 @@ func _resolve_target_state() -> String:
 		if _active_hold_style == "melee":
 			return "Idle"
 		if _active_hold_style in ["rifle", "heavy", "m48"]:
-			if act == "Equip": return "RifleEquip"
-			if act == "Holster": return "RifleHolster"
-			if act == "Reload": return "RifleReload"
-			if act == "Fire": return "HeavyFire" if _active_hold_style == "heavy" else "RifleFire"
-			if _controller.is_aiming: return "RifleAim"
+			if act == "Equip" or act == "Holster" or act == "Reload" or act == "Fire":
+				return "RifleIdle"
+			if _controller.is_aiming: return "RifleIdle"
 			if _active_hold_style == "heavy": return "HeavyIdle" if speed < 0.14 else "HeavyWalk"
 			if speed < 0.14: return "RifleIdle"
 			return "RifleWalk" if speed < 2.6 else "RifleRun"
