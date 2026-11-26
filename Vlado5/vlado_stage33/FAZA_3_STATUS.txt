@@ -1,0 +1,25 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 3 / REKONSTRUKCIJA CHECKPOINT
+Datum: 2026-11-11
+Godot: 4.7.2 stable
+
+REZULTAT
+- Projekat rekonstruisan iz autoritativnog Drive ZIP-a 17-MOhHPeNMzikO4vTLl-NmG-AsPTJcPI.
+- Novi Vlado bind-pose retarget i offline baked weapon animacije; nema TwoBoneIK/proceduralnog rastezanja ruku.
+- Aktivna Gasser poza i osam armed locomotion klipova rekonstruisani.
+- Dodani baked akcioni klipovi: PistolEquip/Holster, RifleEquip/Holster/Fire/Reload i HeavyFire.
+- Weapon routing radi po pistol/rifle/heavy kategoriji.
+- Oružje u ruci je vezano za RightHand BoneAttachment3D; M48 ostaje posebna leđna puška.
+- Gasser mount rotacija: (21.559, -118.542, -88.847).
+- Rifle/heavy mount: position (-0.015974, 0.041719, -0.050044), rotation (77.787, -176.465, 167.626).
+
+PROVJERE
+- Godot 4.7.2 editor import: status 0; nema parse/script/compile grešaka.
+- Runtime pokretanje glavne igre: stabilno tokom 25 s; prekinuto kontrolisanim timeoutom, bez parse/script/compile/runtime grešaka.
+- 31-slot arsenal runtime test: PHASE3_31_DONE count=31 bad=0, status 0.
+- OpenGL render test preko Xvfb: status 0; potvrđeni RifleEquip, RifleFire, RifleReload i RifleIdle.
+- Prva reload iteracija je vizuelno odbačena jer je šaka prolazila iza tijela; zamijenjena sigurnim baked ciklusom i ponovo renderovana.
+
+OGRANIČENJA
+- Akcioni klipovi su generički po kategoriji, ne zasebna mehanički precizna reload animacija za svih 31 modela.
+- Nije testirano na fizičkom Samsung Galaxy S25 Ultra uređaju.
+- Ovo je razvojni checkpoint, nije završna igra niti finalni Android build.

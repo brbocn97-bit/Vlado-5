@@ -1,7 +1,7 @@
 extends WorldRegion
 ## Region 6 — Crni vrh i katuni (Lovćen high peaks).
 ## Shepherd's stone katun + sheepfold, ruined medieval Kula with a climbable
-## parapet, and the fictional post-war security relay camp. Shepherd Vuk keeps the katun.
+## parapet, and the Axis alpine radio relay camp. Shepherd Vuk keeps the katun.
 
 const KATUN := Vector2(360.0, 292.0)
 const KULA := Vector2(404.0, 336.0)
@@ -134,7 +134,7 @@ func _build_kula() -> void:
 
 func _build_relay() -> void:
 	var root := Node3D.new()
-	root.name = "PostWarSecurityRelay"
+	root.name = "AxisAlpineRadioRelay"
 	place(root, RELAY.x, RELAY.y, 0.05)
 	root.rotation.y = 0.8
 	var tent := Stage4Props.prism(Vector3(3.8, 1.9, 3.0), "canvas_axis")

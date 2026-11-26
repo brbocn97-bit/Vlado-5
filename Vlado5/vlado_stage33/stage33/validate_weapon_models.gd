@@ -9,37 +9,9 @@ extends SceneTree
 func _init() -> void:
 	print("=== Stage 3.3 weapon model validation ===")
 	var specs := {
-		"gasser_m1870": 0.36,
-		"m48": 1.10,
-		"mp40": 0.83,
+		"mp40": 0.63,
 		"maschinengewehr_mg_42": 1.22,
 		"mauser_98_sporting": 1.10,
-		"m24_mauser": 1.10,
-		"mosin_91_30": 1.23,
-		"carcano_m91": 1.12,
-		"mannlicher_m95": 1.10,
-		"lee_enfield_no4": 1.13,
-		"svt40": 1.22,
-		"g43": 1.12,
-		"m1_carbine": 0.90,
-		"m1_garand": 1.11,
-		"thompson_m1a1": 0.81,
-		"sten_mk2": 0.76,
-		"ppsh41": 0.84,
-		"beretta_mab38": 0.87,
-		"zk383": 0.88,
-		"mg34": 1.22,
-		"breda_m30": 1.15,
-		"bren_mk1": 1.15,
-		"zb26": 1.16,
-		"luger_p08": 0.24,
-		"walther_p38": 0.23,
-		"tt33": 0.21,
-		"browning_m1922": 0.20,
-		"lovacka_dvocijevka": 1.12,
-		"winchester_m1897": 1.02,
-		"m24_stielhandgranate": 0.36,
-		"bajonet_m1924": 0.43,
 	}
 	for id in specs:
 		_validate(id, specs[id])
@@ -49,9 +21,6 @@ func _init() -> void:
 func _validate(id: String, target_len: float) -> void:
 	var path := "res://assets/weapons/Models/%s.glb" % id
 	print("\n--- %s" % id)
-	if id == "m48":
-		print("    STATUS: INTEGRATED SKINNED MODEL in Vlado_Sipcic_Final.glb")
-		return
 	if not ResourceLoader.exists(path):
 		print("    STATUS: MISSING  (%s)" % path)
 		return

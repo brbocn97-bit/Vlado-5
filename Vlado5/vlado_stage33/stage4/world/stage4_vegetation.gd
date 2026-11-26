@@ -110,9 +110,20 @@ func _scatter() -> void:
 		buckets[i] = []
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1944
+	var tier := 1
+	var qm := get_node_or_null("/root/QualityManager")
+	if qm:
+		tier = clampi(int(qm.get("tier")), 0, 2)
+	var attempt_limit: int = [18000, 32000, 46000][tier]
+	var tree_limit: int = [2600, 4800, 7000][tier]
+	var visibility_distance: float = [220.0, 330.0, 440.0][tier]
+	if OS.get_name() == "Android" and OS.has_feature("editor"):
+		attempt_limit = mini(attempt_limit, 9000)
+		tree_limit = mini(tree_limit, 1400)
+		visibility_distance = minf(visibility_distance, 190.0)
 	var placed := 0
-	for _attempt in 55000:
-		if placed >= 9500:
+	for _attempt in attempt_limit:
+		if placed >= tree_limit:
 			break
 		var x := rng.randf_range(-OUTER_MAX, OUTER_MAX)
 		var z := rng.randf_range(-OUTER_MAX, OUTER_MAX)
@@ -155,8 +166,7 @@ func _scatter() -> void:
 			var mmi := MultiMeshInstance3D.new()
 			mmi.multimesh = mm
 			mmi.name = "OuterForest_%d" % k
-			mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			mmi.visibility_range_end = 460.0
+			mmi.visibility_range_end = visibility_distance
 			mmi.visibility_range_end_margin = 40.0
 			mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			add_child(mmi)

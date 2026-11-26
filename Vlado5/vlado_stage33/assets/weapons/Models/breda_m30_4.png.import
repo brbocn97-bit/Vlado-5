@@ -7,9 +7,6 @@ path="res://.godot/imported/breda_m30_4.png-78d333fe9b619298efdc5b6e463b39c9.cte
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "40dc1d847934434b3e182cd221371576"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

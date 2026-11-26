@@ -7,9 +7,6 @@ path="res://.godot/imported/put_staze_1.png-e4673c117b9a7ae42c237f58ea16591b.cte
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "5f7c44ac413b7f203c10191db503d50b"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

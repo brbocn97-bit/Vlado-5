@@ -10,9 +10,10 @@ config_version=5
 
 [application]
 
-config/name="Vlado Šipčić: Poslijeratna priča"
+config/name="Vlado Šipčić: The Last Outlaw"
 run/main_scene="res://scenes/main/montenegro_world.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
+config/icon="res://assets/ui/android_icon_512.png"
 
 [autoload]
 
@@ -29,6 +30,7 @@ window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
+window/energy_saving/keep_screen_on=true
 
 [input]
 

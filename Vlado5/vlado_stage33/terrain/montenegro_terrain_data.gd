@@ -24,7 +24,7 @@ const VILLAGE_ELEV := 2.60
 const S4_SITES := [
 	{"id": "Krupa_Valley",      "c": Vector2(0.0, 0.0),      "h": 1.95, "r": 150.0, "blend": 120.0},
 	{"id": "Crnca_Village",     "c": Vector2(-340.0, 10.0),  "h": 24.0, "r": 118.0, "blend": 96.0},
-	{"id": "Security_Checkpoint", "c": Vector2(340.0, -90.0),  "h": 32.0, "r": 96.0,  "blend": 88.0},
+	{"id": "Axis_Checkpoint",   "c": Vector2(340.0, -90.0),  "h": 32.0, "r": 96.0,  "blend": 88.0},
 	{"id": "Durmitor_Forest_Hideout", "c": Vector2(-250.0, -350.0),"h": 42.0, "r": 84.0,  "blend": 92.0},
 	{"id": "Krupa_Canyon_Crossings", "c": Vector2(100.0, 340.0),  "h": 28.0, "r": 104.0, "blend": 100.0},
 	{"id": "Lovcen_High_Peaks",  "c": Vector2(360.0, 290.0),  "h": 66.0, "r": 96.0,  "blend": 96.0},
@@ -74,7 +74,7 @@ func _init() -> void:
 	_noise_ridge.fractal_type = FastNoiseLite.FRACTAL_RIDGED
 	_noise_ridge.fractal_octaves = 4
 
-	# Main road: Crnca -> Krupa Valley -> Security checkpoint.
+	# Main road: Crnca -> Krupa Valley -> Axis checkpoint.
 	_road_pts = PackedVector2Array([
 		Vector2(-455.0, -10.0),
 		Vector2(-330.0, 18.0),

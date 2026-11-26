@@ -36,7 +36,6 @@ var _time_mode_idx: int = 0
 var _time_labels := ["Morning", "Noon", "Dusk", "Night", "Auto"]
 var _hit_notice_timer: float = 0.0
 var _last_hit_text: String = ""
-var _telemetry_timer := 0.0
 
 func _ready() -> void:
 	_player = get_node_or_null(player_path)
@@ -51,6 +50,16 @@ func _ready() -> void:
 		_fp_rig = _player.find_child("FirstPersonRig", true, false) as FirstPersonRig
 
 	_build_combat_hud_widgets()
+	# Production phone HUD: keep health/stamina/ammo, but remove development
+	# telemetry and editor-only buttons from the gameplay screen.
+	_telemetry_label.visible = false
+	$Panel/Margin/VBox/ControlsRow.visible = false
+	var status_panel := $Panel as PanelContainer
+	status_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	status_panel.offset_left = -670.0
+	status_panel.offset_top = 92.0
+	status_panel.offset_right = -18.0
+	status_panel.offset_bottom = 164.0
 
 	if _mobile_controls and _player:
 		_mobile_controls.joystick_moved.connect(_player.set_touch_move_vector)
@@ -72,12 +81,7 @@ func _ready() -> void:
 
 	if _quality_btn:
 		_quality_btn.pressed.connect(_on_cycle_quality)
-		var qm := get_node_or_null("/root/QualityManager")
-		if qm:
-			_current_tier = int(qm.get("tier"))
-			_quality_btn.text = "Quality: " + str(qm.get("tier_name"))
-		else:
-			_quality_btn.text = "Quality: " + _tier_names[_current_tier]
+		_quality_btn.text = "Quality: " + _tier_names[_current_tier]
 	if _time_btn:
 		_time_btn.visible = (_time_ctrl != null)
 		_time_btn.pressed.connect(_on_cycle_time)
@@ -180,6 +184,8 @@ func _on_cycle_quality() -> void:
 	if qm and qm.has_method("cycle_tier"):
 		qm.cycle_tier()
 		_current_tier = int(qm.get("tier"))
+		if _vegetation:
+			_vegetation.apply_quality_scale(mini(_current_tier, 2))
 		_quality_btn.text = "Quality: " + str(qm.get("tier_name"))
 		return
 	_current_tier = (_current_tier + 1) % 3
@@ -305,10 +311,8 @@ func _process(delta: float) -> void:
 		var move_spread := clampf(_player.current_horizontal_speed * 2.4, 0.0, 14.0)
 		_crosshair.update_state(_weapon.is_equipped(), _weapon.is_aiming(), move_spread, _player.is_first_person())
 
-	_telemetry_timer += delta
-	if not _telemetry_label or _telemetry_timer < 0.25:
+	if not _telemetry_label:
 		return
-	_telemetry_timer = 0.0
 	var fps := Engine.get_frames_per_second()
 	var state := _player.current_locomotion_state if _player else "-"
 	var gait := _player.get_gait_label() if _player else "-"
@@ -326,18 +330,12 @@ func _process(delta: float) -> void:
 	var dist := _camera_rig.get_effective_distance() if _camera_rig else 0.0
 	var fov := _camera_rig.get_effective_fov() if _camera_rig else 0.0
 	var stage_txt := "Stage 3.2 | " + _time_ctrl.get_time_label() if _time_ctrl else "Stage 1"
-	var process_ms := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
-	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
-	var draw_calls := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
-	var primitives := int(Performance.get_monitor(Performance.RENDER_TOTAL_PRIMITIVES_IN_FRAME))
 
 	_telemetry_label.text = (
 		"Vlado Sipcic | %s | FPS: %d | %s | Mode: %s\n" +
 		"State: %s  |  Anim: %s  |  Speed: %.2f m/s\n" +
-		"Slope: %.1f deg  |  Cam: %.2fm/%.0f deg  |  Pos: (%.1f, %.1f)  tlo+%.2f\n" +
-		"CPU: %.1f ms | Physics: %.1f ms | Draws: %d | Tris: %d"
-	) % [stage_txt, fps, view_lbl, gait, state, anim, speed, slope, dist, fov, pos.x, pos.z, above_ground,
-		process_ms, physics_ms, draw_calls, primitives]
+		"Slope: %.1f deg  |  Cam: %.2fm/%.0f deg  |  Pos: (%.1f, %.1f)  tlo+%.2f"
+	) % [stage_txt, fps, view_lbl, gait, state, anim, speed, slope, dist, fov, pos.x, pos.z, above_ground]
 
 
 ## POPRAVKA v17 - GRUPA E: terrain_data iz glavne scene.

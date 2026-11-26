@@ -84,11 +84,11 @@ void fragment() {
 	}
 
 	float macro = macro_noise(v_world_pos.xz * 0.032);
-	albedo *= mix(0.84, 1.12, macro);
+	albedo *= mix(0.90, 1.07, macro);
 
 	ALBEDO = albedo;
 	NORMAL_MAP = n_blend;
 	NORMAL_MAP_DEPTH = mix(0.75, 1.35, w_rock);
-	ROUGHNESS = mix(0.92, 0.82, w_rock * 0.5 + road_w * 0.25);
-	SPECULAR = mix(0.18, 0.30, w_rock);
+	ROUGHNESS = mix(0.96, 0.88, w_rock * 0.5 + road_w * 0.25);
+	SPECULAR = mix(0.12, 0.22, w_rock);
 }

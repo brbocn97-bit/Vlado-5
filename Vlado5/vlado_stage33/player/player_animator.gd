@@ -4,7 +4,7 @@ extends Node
 @export var controller_path: NodePath = NodePath("..")
 @export var model_root_path: NodePath = NodePath("../VisualRoot/VladoModel")
 @export var visual_root_path: NodePath = NodePath("../VisualRoot")
-@export var locomotion_library_path: String = "res://animations/vlado_locomotion.tres"
+@export var locomotion_library_path: String = ""
 @export var crossfade_seconds: float = 0.16
 
 # Referentne brzine = brzina kojom animacija PRIRODNO krece stopalo.
@@ -40,13 +40,14 @@ var _rifle_home: Transform3D = Transform3D.IDENTITY
 var _rifle_attached := false
 var _has_wm_offset: bool = false
 
-const VladoWeaponIK := preload("res://player/vlado_weapon_ik.gd")
+var _active_hold_style: String = "pistol"
+var _weapon_mount_node: Node3D = null
 
 var _smoothed_bank_rad: float = 0.0
 var _smoothed_slope_lean_rad: float = 0.0
 var _smoothed_ground_drop: float = 0.0
 var _smoothed_aim_pitch_rad: float = 0.0
-var _ik_mod: VladoWeaponIKModifier = null
+var _ik_mod: Node = null
 
 func _ready() -> void:
 	_controller = get_node_or_null(controller_path)
@@ -55,30 +56,53 @@ func _ready() -> void:
 	if model_root:
 		_anim_player = model_root.find_child("AnimationPlayer", true, false)
 		_skel = model_root.find_child("Skeleton3D", true, false)
-		_configure_hair_material(model_root)
+		_configure_character_materials(model_root)
 
 	if _anim_player and _skel:
-		_load_locomotion_library()
 		_cache_skeleton_indices()
-		_skel.skeleton_updated.connect(_on_skeleton_updated)
-		_ik_mod = VladoWeaponIK.new()
-		_ik_mod.name = "VladoWeaponIKModifier"
-		_ik_mod.controller = _controller
-		_ik_mod.animator = self
-		_skel.add_child(_ik_mod)
 	if _anim_player:
 		_setup_animation_tree()
 
 
 
-func _configure_hair_material(model_root: Node) -> void:
-	var hair_mesh: MeshInstance3D = model_root.find_child("Vlado_Hair", true, false)
-	if hair_mesh and hair_mesh.mesh and hair_mesh.mesh.get_surface_count() > 0:
-		var mat: Material = hair_mesh.mesh.surface_get_material(0)
-		if mat is StandardMaterial3D:
-			var smat := mat as StandardMaterial3D
-			smat.cull_mode = BaseMaterial3D.CULL_BACK
-			smat.alpha_scissor_threshold = 0.42
+func _configure_character_materials(model_root: Node) -> void:
+	# Ne oslanjaj se na GLB ORM interpretaciju na Android mobile rendereru.
+	# Eksplicitni surface override sprečava potpuno crnu siluetu na telefonu.
+	_apply_vlado_material(model_root, "Vlado_Body", "Character", false)
+	_apply_vlado_material(model_root, "Vlado_Hair", "Hair", true)
+	_apply_vlado_material(model_root, "Rifle_BoltAction", "Rifle", false)
+
+
+func _apply_vlado_material(model_root: Node, mesh_name: String, texture_name: String, is_hair: bool) -> void:
+	var mesh_instance := model_root.find_child(mesh_name, true, false) as MeshInstance3D
+	if mesh_instance == null or mesh_instance.mesh == null or mesh_instance.mesh.get_surface_count() == 0:
+		return
+	var base := "res://assets/characters/vlado/Vlado_Sipcic_ReRigged_%s_" % texture_name
+	var albedo := load(base + "Albedo.jpg") as Texture2D
+	var normal := load(base + "Normal.jpg") as Texture2D
+	if albedo == null:
+		push_warning("Vlado material missing: " + base + "Albedo.jpg")
+		return
+	var mat := StandardMaterial3D.new()
+	mat.albedo_texture = albedo
+	mat.albedo_color = Color(1.0, 1.0, 1.0, 1.0)
+	mat.metallic = 0.0
+	mat.roughness = 0.84 if not is_hair else 0.78
+	mat.normal_enabled = normal != null
+	mat.normal_texture = normal
+	mat.normal_scale = 0.62
+	# Vrlo blaga teksturisana emisija čuva detalje u sjenci bez unshaded izgleda.
+	mat.emission_enabled = true
+	mat.emission_texture = albedo
+	mat.emission = Color(0.10, 0.10, 0.10)
+	mat.emission_energy_multiplier = 1.0
+	if is_hair:
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		mat.alpha_scissor_threshold = 0.42
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	else:
+		mat.cull_mode = BaseMaterial3D.CULL_BACK
+	mesh_instance.set_surface_override_material(0, mat)
 
 func _load_locomotion_library() -> void:
 	if not ResourceLoader.exists(locomotion_library_path):
@@ -115,29 +139,10 @@ func _setup_animation_tree() -> void:
 	_anim_tree.name = "LocomotionTree"
 	add_child(_anim_tree)
 
-	var use_loco := _anim_player.has_animation_library("vlado_loco")
-	var pfx := "vlado_loco/" if use_loco else ""
-
 	var sm := AnimationNodeStateMachine.new()
-	var state_to_clip := {
-		"Idle": pfx + "Idle",
-		"Walking": pfx + "Walking",
-		"Running": pfx + "Running",
-		"Sprinting": pfx + "Sprinting",
-		"CrouchIdle": pfx + "CrouchIdle" if use_loco else "Crouching",
-		"CrouchWalk": pfx + "CrouchWalk" if use_loco else "Walking",
-		"JumpStart": pfx + "JumpStart" if use_loco else "Jumping",
-		"Jumping": pfx + "JumpAir" if use_loco else "Jumping",
-		"Landing": pfx + "Landing",
-	}
-	if use_loco:
-		for combat_st in [
-			"RifleReadyIdle", "RifleReadyWalk",
-			"AimIdle", "AimWalk", "AimCrouchIdle", "AimCrouchWalk",
-			"EquipRifle", "HolsterRifle", "FireRecoil", "ReloadBolt"
-		]:
-			if _anim_player.has_animation(pfx + combat_st):
-				state_to_clip[combat_st] = pfx + combat_st
+	var state_to_clip := {"Idle":"Idle","Walking":"Walking","Running":"Running","Sprinting":"Sprinting","CrouchIdle":"CrouchIdle","CrouchWalk":"Crouching","JumpStart":"JumpStart","Jumping":"Jumping","Landing":"Landing"}
+	for combat_st in ["PistolIdle","PistolAim","PistolFire","PistolReload","PistolWalk","PistolRun","PistolEquip","PistolHolster","RifleIdle","RifleAim","RifleWalk","RifleRun","HeavyIdle","HeavyWalk","RifleEquip","RifleHolster","RifleFire","HeavyFire","RifleReload","GrenadeIdle","GrenadeThrow","MeleeIdle","MeleeAttack"]:
+		if _anim_player.has_animation(combat_st): state_to_clip[combat_st] = combat_st
 
 	for state_name in state_to_clip.keys():
 		var node := AnimationNodeAnimation.new()
@@ -150,7 +155,7 @@ func _setup_animation_tree() -> void:
 	sm.add_transition("Start", "Idle", tr_start)
 
 	var grounded_states := ["Idle", "Walking", "Running", "Sprinting", "CrouchIdle", "CrouchWalk"]
-	var combat_states := ["RifleReadyIdle", "RifleReadyWalk", "AimIdle", "AimWalk", "AimCrouchIdle", "AimCrouchWalk", "EquipRifle", "HolsterRifle", "FireRecoil", "ReloadBolt"]
+	var combat_states := ["PistolIdle","PistolAim","PistolFire","PistolReload","PistolWalk","PistolRun","PistolEquip","PistolHolster","RifleIdle","RifleAim","RifleWalk","RifleRun","HeavyIdle","HeavyWalk","RifleEquip","RifleHolster","RifleFire","HeavyFire","RifleReload","GrenadeIdle","GrenadeThrow","MeleeIdle","MeleeAttack"]
 	var all_grounded := grounded_states.duplicate()
 	for cs in combat_states:
 		if state_to_clip.has(cs):
@@ -232,24 +237,35 @@ func _resolve_target_state() -> String:
 		return loco
 
 	var act: String = _controller.weapon_action
-	if act == "Equip" and _anim_player.has_animation("vlado_loco/EquipRifle"):
-		return "EquipRifle"
-	if act == "Holster" and _anim_player.has_animation("vlado_loco/HolsterRifle"):
-		return "HolsterRifle"
-	if act == "Reload" and _anim_player.has_animation("vlado_loco/ReloadBolt"):
-		return "ReloadBolt"
-	if act == "Fire" and _anim_player.has_animation("vlado_loco/FireRecoil"):
-		return "FireRecoil"
-
-	if _controller.is_aiming and _anim_player.has_animation("vlado_loco/AimIdle"):
-		if _controller.is_crouch_active():
-			return "AimCrouchIdle" if _controller.current_horizontal_speed < 0.14 else "AimCrouchWalk"
-		return "AimIdle" if _controller.current_horizontal_speed < 0.14 else "AimWalk"
-
-	if _controller.weapon_equipped and _anim_player.has_animation("vlado_loco/RifleReadyIdle"):
-		if _controller.is_crouch_active():
-			return "AimCrouchIdle" if _controller.current_horizontal_speed < 0.14 else "AimCrouchWalk"
-		return "RifleReadyIdle" if _controller.current_horizontal_speed < 0.14 else "RifleReadyWalk"
+	var speed := _controller.current_horizontal_speed
+	if _controller.weapon_equipped:
+		if _active_hold_style == "pistol":
+			if act == "Equip": return "PistolEquip"
+			if act == "Holster": return "PistolHolster"
+			if act == "Reload": return "PistolReload"
+			if act == "Fire": return "PistolFire"
+			if _controller.is_aiming: return "PistolAim"
+			if speed < 0.14: return "PistolIdle"
+			return "PistolWalk" if speed < 2.2 else "PistolRun"
+		if _active_hold_style == "grenade":
+			if act == "Equip": return "PistolEquip"
+			if act == "Holster": return "PistolHolster"
+			if act == "Fire": return "GrenadeThrow"
+			return "GrenadeIdle"
+		if _active_hold_style == "melee":
+			if act == "Equip": return "PistolEquip"
+			if act == "Holster": return "PistolHolster"
+			if act == "Fire": return "MeleeAttack"
+			return "MeleeIdle"
+		if _active_hold_style in ["rifle", "heavy", "m48"]:
+			if act == "Equip": return "RifleEquip"
+			if act == "Holster": return "RifleHolster"
+			if act == "Reload": return "RifleReload"
+			if act == "Fire": return "HeavyFire" if _active_hold_style == "heavy" else "RifleFire"
+			if _controller.is_aiming: return "RifleAim"
+			if _active_hold_style == "heavy": return "HeavyIdle" if speed < 0.14 else "HeavyWalk"
+			if speed < 0.14: return "RifleIdle"
+			return "RifleWalk" if speed < 2.6 else "RifleRun"
 
 	return loco
 
@@ -270,8 +286,10 @@ func _process(delta: float) -> void:
 	match _active_state:
 		"Walking":
 			scale = clampf(speed / WALK_REF_SPEED, 0.55, 1.60)
-		"RifleReadyWalk":
+		"PistolWalk", "RifleWalk", "HeavyWalk":
 			scale = clampf(speed / WALK_REF_SPEED, 0.58, 1.55)
+		"PistolRun", "RifleRun":
+			scale = clampf(speed / RUN_REF_SPEED, 0.62, 1.45)
 		"Running":
 			scale = clampf(speed / RUN_REF_SPEED, 0.62, 1.45)
 		"Sprinting":
@@ -456,19 +474,12 @@ func _on_skeleton_updated() -> void:
 	# pregazila nasu pozu. Postavljanje je u _process (vidi dolje).
 	# === kraj popravke ===
 
-func set_weapon_hold_profile(hold_style: String, grip_l_local: Vector3 = Vector3(0.0, 0.02, -0.26)) -> void:
-	if _ik_mod != null:
-		_ik_mod.active_hold_style = hold_style
-		_ik_mod.active_grip_l_local = grip_l_local
-
-
+func set_weapon_hold_profile(hold_style: String, _grip_l_local: Vector3 = Vector3(0.0, 0.02, -0.26)) -> void:
+	_active_hold_style = hold_style
 func set_weapon_mount_node(node: Node3D) -> void:
-	if _ik_mod != null:
-		_ik_mod.weapon_mount_node = node
-
-
-func get_weapon_ik_modifier() -> VladoWeaponIKModifier:
-	return _ik_mod
+	_weapon_mount_node = node
+func get_weapon_ik_modifier() -> Node:
+	return null
 
 
 func get_active_animation() -> String:

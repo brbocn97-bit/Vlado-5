@@ -204,10 +204,10 @@ func try_fire() -> bool:
 		var surf := "dirt"
 		var is_tgt := false
 		var hit_dist := _controller.global_position.distance_to(impact_pos) if _controller else 0.0
-		# Stage 4: the M48 damages post-war adversaries. Hit registration
+		# Stage 4: the M48 also has to hurt German soldiers. Hit registration
 		# stays identical; only an extra branch is added before the target case.
-		if collider is PostWarEnemy:
-			(collider as PostWarEnemy).take_damage(120.0)
+		if collider is GermanSoldier:
+			(collider as GermanSoldier).take_damage(120.0)
 			surf = "wood"
 			target_hit.emit(false, hit_dist, targets_hit_set.size())
 		elif collider is ShootingTarget:

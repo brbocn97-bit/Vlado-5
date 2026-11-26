@@ -2,24 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://db566t835royw"
-path.etc2="res://.godot/imported/kaldrma_1.jpg-a577b36543c8a5acb85cf8fd3a08b4ab.etc2.ctex"
+uid="uid://bytreon8u2c72"
+path="res://.godot/imported/kaldrma_1.jpg-a577b36543c8a5acb85cf8fd3a08b4ab.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
-"vram_texture": true
-}
-generator_parameters={
-"md5": "7b67bc3906ea5771fc960d3b59c775ac"
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/models/teren/kaldrma_1.jpg"
-dest_files=["res://.godot/imported/kaldrma_1.jpg-a577b36543c8a5acb85cf8fd3a08b4ab.etc2.ctex"]
+dest_files=["res://.godot/imported/kaldrma_1.jpg-a577b36543c8a5acb85cf8fd3a08b4ab.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -27,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -41,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

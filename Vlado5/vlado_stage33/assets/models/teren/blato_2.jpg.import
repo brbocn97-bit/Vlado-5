@@ -2,35 +2,31 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cb4stkr15mn4y"
-path.etc2="res://.godot/imported/blato_2.jpg-8c03258975a3d1aec3cb6cb6f5da463f.etc2.ctex"
+uid="uid://byhkk0w2xuv0r"
+path="res://.godot/imported/blato_2.jpg-8c03258975a3d1aec3cb6cb6f5da463f.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
-"vram_texture": true
-}
-generator_parameters={
-"md5": "518206c2e247b7ba6d5844a666f07e73"
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/models/teren/blato_2.jpg"
-dest_files=["res://.godot/imported/blato_2.jpg-8c03258975a3d1aec3cb6cb6f5da463f.etc2.ctex"]
+dest_files=["res://.godot/imported/blato_2.jpg-8c03258975a3d1aec3cb6cb6f5da463f.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
-roughness/mode=1
-roughness/src_normal="res://assets/models/teren/blato_2.jpg"
+roughness/mode=0
+roughness/src_normal=""
 process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
@@ -41,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

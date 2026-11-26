@@ -2,24 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cygv02tgwkc5o"
-path.etc2="res://.godot/imported/stalka_0.jpg-aa090551863d695580be3bc46a48fc4c.etc2.ctex"
+uid="uid://bt4qnfsdxhdra"
+path="res://.godot/imported/stalka_0.jpg-aa090551863d695580be3bc46a48fc4c.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
-"vram_texture": true
-}
-generator_parameters={
-"md5": "5c0ef7e269b1f55ee37a52f170dc6b65"
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/models/zgrade/stalka_0.jpg"
-dest_files=["res://.godot/imported/stalka_0.jpg-aa090551863d695580be3bc46a48fc4c.etc2.ctex"]
+dest_files=["res://.godot/imported/stalka_0.jpg-aa090551863d695580be3bc46a48fc4c.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -27,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -41,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

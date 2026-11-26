@@ -11,8 +11,8 @@ extends Node
 ##   1. Region streaming (six WorldRegion nodes, ACTIVE / MID / FAR tiers).
 ##   2. Backwards-compatible chunk registration for the Stage 3.2 terrain grid.
 ##
-## Region details and AI are active only near the player. A 40 m hysteresis
-## band prevents repeated activation at the boundaries.
+## Radii follow the Stage 4 plan: active <= 280 m, mid <= 520 m, and a 420 m
+## hysteresis reload so regions cannot pop-thrash at the boundary.
 
 signal chunk_tier_changed(chunk: Node3D, tier: int)
 signal region_state_changed(region: Node3D, state: int)
@@ -20,13 +20,17 @@ signal active_region_changed(region: Node3D)
 
 enum ChunkTier { NEAR, MID, FAR }
 
+const ACTIVE_RADIUS := 280.0
+const MID_RADIUS := 520.0
+const RELOAD_RADIUS := 420.0
+
 @export_group("Player")
 @export var player_path: NodePath = NodePath("../VladoPlayer")
 
 @export_group("Streaming")
 @export var update_interval: float = 0.25
-@export var near_distance: float = 120.0
-@export var mid_distance: float = 360.0
+@export var near_distance: float = 280.0
+@export var mid_distance: float = 520.0
 @export var hysteresis: float = 40.0
 @export var hide_far_chunks: bool = false
 
@@ -144,33 +148,19 @@ func _update_regions(pos: Vector3) -> void:
 			continue
 		var dist := RegionData.distance_to_bounds(data, p2)
 		var prev: int = region_states.get(region.get_instance_id(), WorldRegion.FAR)
-		var active_entry := near_distance
-		var active_exit := near_distance + hysteresis
-		var mid_entry := mid_distance
-		var mid_exit := mid_distance + hysteresis
-		var next: int
-		match prev:
-			WorldRegion.ACTIVE:
-				if dist <= active_exit:
-					next = WorldRegion.ACTIVE
-				elif dist <= mid_exit:
-					next = WorldRegion.MID
-				else:
-					next = WorldRegion.FAR
-			WorldRegion.MID:
-				if dist <= active_entry:
-					next = WorldRegion.ACTIVE
-				elif dist <= mid_exit:
-					next = WorldRegion.MID
-				else:
-					next = WorldRegion.FAR
-			_:
-				if dist <= active_entry:
-					next = WorldRegion.ACTIVE
-				elif dist <= mid_entry:
-					next = WorldRegion.MID
-				else:
-					next = WorldRegion.FAR
+		var next := prev
+
+		if dist <= ACTIVE_RADIUS:
+			next = WorldRegion.ACTIVE
+		elif dist <= MID_RADIUS:
+			next = WorldRegion.MID
+		else:
+			next = WorldRegion.FAR
+		# hysteresis: a FAR region only wakes at RELOAD_RADIUS
+		if prev == WorldRegion.FAR and dist > RELOAD_RADIUS:
+			next = WorldRegion.FAR
+		elif prev == WorldRegion.FAR and dist <= RELOAD_RADIUS:
+			next = WorldRegion.MID
 
 		if next != prev:
 			region_states[region.get_instance_id()] = next

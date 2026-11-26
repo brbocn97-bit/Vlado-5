@@ -8,7 +8,7 @@ extends Node
 ## and scatters a few weapon pickups near the spawn so the new guns can be
 ## tested immediately, plus the world placement hooks Stage 4 uses later.
 
-@export var debug_pickups := true
+@export var debug_pickups := false
 @export var debug_fps_rot := false
 var swap_key := KEY_Q
 @export var reload_key := KEY_R
@@ -74,7 +74,7 @@ func _spawn_debug_pickups(world: Node) -> void:
 	# Za testiranje ostaje SAMO JEDAN pickup. Ostali se vracaju kad se potvrdi
 	# da sistem radi, sa razmakom od najmanje 4 m.
 	var specs := [
-		{"id": "ppsh41", "pos": Vector3(-5.9, 0, 7.6)},
+		{"id": "mp40", "pos": Vector3(-5.9, 0, 7.6)},
 		{"id": "mauser_98", "pos": Vector3(1.8, 0, 7.6)},
 	]
 	var terrain = world.get("terrain_data")

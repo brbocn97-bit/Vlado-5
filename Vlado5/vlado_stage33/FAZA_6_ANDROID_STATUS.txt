@@ -1,0 +1,37 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 6 ANDROID BUILD
+Datum: 2026-11-11
+Engine: Godot 4.7.2 stable
+
+URAĐENO
+- Faza 5 projekat obnovljen iz potvrđenog Drive checkpointa MD5 e2384d915fe881e4be1616afb05f20ce.
+- Android preset očišćen od hardkodovane release-keystore putanje, korisnika i lozinke.
+- Dodan novi Android launcher icon i uključen launcher app.
+- Izvezen stvarni ARM64 debug APK.
+- Package: com.vlado.lastoutlaw.game
+- Version: 0.6.0-dev / code 6
+- min SDK 24, target SDK 36
+- Mobile renderer, landscape sensor, immersive mode.
+
+APK
+- Naziv: VladoSipcic_Faza6_Debug_ARM64.apk
+- Veličina: 115827065 bajtova
+- MD5: c0e1904bba72fa38a74da222c286a82a
+- SHA-256: c629fe4f55553ee5fea5e480013db0099ce327d5fbffb5a21b24e6182176ae88
+- Samo arm64-v8a native biblioteke.
+- APK Signature Scheme v2 i v3: verified.
+- ZIP alignment: verified.
+- APK archive integrity: verified.
+- Launcher activity i MAIN/LAUNCHER intent potvrđeni u manifestu.
+
+REGRESIONI TESTOVI
+- Godot editor/import status 0.
+- 31-slot arsenal: count=31 bad=0.
+- Weapon switch: bad=0.
+- Firearm combat flow: bad=0.
+- Grenade/melee flow: bad=0.
+- Main runtime 20 s bez prijavljenih parse/script/compile/runtime grešaka; zaustavljen kontrolisanim timeoutom.
+
+OGRANIČENJA
+- APK je debug build, nije Play Store release i nije production-signed.
+- APK nije pokrenut na fizičkom Samsung Galaxy S25 Ultra uređaju.
+- Nisu izmjereni stvarni FPS, termalno zagrijavanje, RAM niti dugotrajna stabilnost na telefonu.

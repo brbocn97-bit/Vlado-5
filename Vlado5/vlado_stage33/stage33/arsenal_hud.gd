@@ -6,8 +6,8 @@ extends CanvasLayer
 ## this layer adds the parts the debug HUD has no concept of: which weapon is in
 ## hand, what the other owned weapons hold, and the pickup prompt.
 
-const COL_BG := Color(0.05, 0.06, 0.05, 0.72)
-const COL_EDGE := Color(0.66, 0.56, 0.34, 0.9)
+const COL_BG := Color(0.025, 0.035, 0.034, 0.82)
+const COL_EDGE := Color(0.68, 0.55, 0.31, 0.92)
 const COL_TEXT := Color(0.94, 0.91, 0.84)
 const COL_DIM := Color(0.62, 0.60, 0.54)
 const COL_ACCENT := Color(0.92, 0.74, 0.34)
@@ -39,7 +39,7 @@ func _panel() -> PanelContainer:
 	sb.bg_color = COL_BG
 	sb.border_color = COL_EDGE
 	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(5)
+	sb.set_corner_radius_all(3)
 	sb.content_margin_left = 12
 	sb.content_margin_right = 12
 	sb.content_margin_top = 6
@@ -69,10 +69,10 @@ func _build() -> void:
 	p.anchor_top = 0.0
 	p.anchor_right = 1.0
 	p.anchor_bottom = 0.0
-	p.offset_left = -410
+	p.offset_left = -360
 	p.offset_top = 18
-	p.offset_right = -128
-	p.custom_minimum_size = Vector2(282, 0)
+	p.offset_right = -18
+	p.custom_minimum_size = Vector2(342, 0)
 	root.add_child(p)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 2)

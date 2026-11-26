@@ -1,0 +1,30 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 8 GRAFIČKI PROFILI
+Datum: 2026-11-11
+Godot: 4.7.2 stable
+Cilj: Android ARM64, od slabijih telefona do Galaxy S25 Ultra
+
+NOVO
+- U igri je aktivirano dugme PODEŠAVANJA.
+- Dodan responzivan meni GRAFIČKA PODEŠAVANJA sa LOW, MEDIUM i HIGH profilima.
+- Izbor se trajno čuva u user://graphics_quality.cfg i automatski vraća pri sljedećem pokretanju.
+- Pri prvom pokretanju bez sačuvane postavke bira se profil prema Android GPU nazivu.
+- Android nikad automatski ne dobija desktop ULTRA profil.
+
+PROFILI
+LOW: 30 FPS, 65% 3D rezolucije, trava 42 m, ostalo rastinje 80 m, sjenke ugašene.
+MEDIUM: 45 FPS, 80% 3D rezolucije, trava 72 m, ostalo rastinje 160 m, sjenke 30 m.
+HIGH: 60 FPS, 100% 3D rezolucije, trava 95 m, ostalo rastinje 280 m, sjenke 60 m.
+
+PROVJERE
+- Godot editor/import: status 0.
+- Runtime profil test: LOW/MEDIUM/HIGH 3/3, bad=0.
+- Čuvanje i ponovno učitavanje MEDIUM profila: status 0.
+- UI izbor LOW i MEDIUM, aktivno dugme i opis: status 0.
+- OpenGL render menija na 2340x1080: status 0.
+- Phone UI responsive test: bad=0.
+- Arsenal 31 slot: count=31 bad=0.
+- Weapon switch, firearm combat i grenade/melee regresije: bad=0.
+- Main runtime bez prijavljenih parse/script/compile/runtime grešaka tokom kontrolisanog testa.
+
+OGRANIČENJE
+Profili nijesu još izmjereni na stvarnim slabijim telefonima niti na fizičkom S25 Ultra. Brojke su konfiguracioni ciljevi, ne tvrdnja o izmjerenom FPS-u.

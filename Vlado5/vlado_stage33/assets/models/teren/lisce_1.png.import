@@ -7,9 +7,6 @@ path="res://.godot/imported/lisce_1.png-7b9edba7d4fae5a04c2e3336bc69dc46.ctex"
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "2948b45317af59a062f4c6068218393d"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

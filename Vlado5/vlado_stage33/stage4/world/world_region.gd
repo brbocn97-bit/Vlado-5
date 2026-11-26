@@ -91,7 +91,7 @@ func add_actor(n: Node3D) -> Node3D:
 ## POPRAVLJENO (defekt #6, lebdece gajbe):
 ## Ako je `sink == 0.0`, automatski se dno vizuelnog mesha poravna sa tlom.
 ## Prije je pozivalac morao rucno dodavati `position.y += visina/2`, i to je
-## cesto promasivalo (npr. gajbe na sigurnosnom punktu: 0.22 umjesto 0.22+...),
+## cesto promasivalo (npr. gajbe na Axis punktu: 0.22 umjesto 0.22+...),
 ## pa su gajbe lebdjele ili bile do pola u zemlji.
 ##
 ## `sink > 0` ostaje staro ponasanje (namjerno kopanje u teren: ograde, kolce).

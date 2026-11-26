@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scenes/main/montenegro_world.gd" id="1_mw"]
 [ext_resource type="Script" path="res://terrain/montenegro_terrain.gd" id="2_ter"]
@@ -13,6 +13,8 @@
 [ext_resource type="Script" path="res://stage33/stage33_bootstrap.gd" id="11_s33"]
 [ext_resource type="Script" path="res://stage4/stage4_bootstrap.gd" id="12_s4"]
 [ext_resource type="Script" path="res://ui/inventory_bag.gd" id="13_bag"]
+[ext_resource type="Script" path="res://ui/world_map.gd" id="14_map"]
+[ext_resource type="Script" path="res://ui/immersive_hud.gd" id="15_ihud"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMat_m2"]
 sky_top_color = Color(0.28, 0.42, 0.56, 1)
@@ -34,9 +36,9 @@ tonemap_mode = 3
 tonemap_white = 1.1
 fog_enabled = true
 fog_light_color = Color(0.62, 0.68, 0.72, 1)
-fog_density = 0.0038
-fog_sky_affect = 0.68
-fog_aerial_perspective = 0.62
+fog_density = 0.0025
+fog_sky_affect = 0.52
+fog_aerial_perspective = 0.46
 
 [node name="MontenegroWorld" type="Node3D"]
 script = ExtResource("1_mw")
@@ -47,7 +49,7 @@ environment = SubResource("Env_m2")
 [node name="SunLight" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.866025, -0.321394, 0.383022, 0, 0.766044, 0.642788, -0.5, -0.55667, 0.663414, 0, 40, 0)
 light_color = Color(0.98, 0.94, 0.88, 1)
-light_energy = 1.38
+light_energy = 1.18
 shadow_enabled = true
 directional_shadow_max_distance = 105.0
 
@@ -83,7 +85,7 @@ vegetation_path = NodePath("../MontenegroVegetation")
 
 [node name="Stage33Bootstrap" type="Node" parent="."]
 script = ExtResource("11_s33")
-debug_pickups = true
+debug_pickups = false
 debug_fps_rot = false
 swap_key = 81
 reload_key = 82
@@ -95,3 +97,19 @@ spawn_region_override = ""
 
 [node name="InventoryBag" type="CanvasLayer" parent="."]
 script = ExtResource("13_bag")
+
+[node name="WorldMapLayer" type="CanvasLayer" parent="."]
+layer = 18
+
+[node name="WorldMap" type="Control" parent="WorldMapLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_map")
+
+[node name="ImmersiveHUD" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("15_ihud")

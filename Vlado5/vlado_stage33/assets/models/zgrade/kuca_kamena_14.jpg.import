@@ -2,24 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cn2mq2nanyj8p"
-path.etc2="res://.godot/imported/kuca_kamena_14.jpg-1545d0fc3df37dce429c3bd042f8d762.etc2.ctex"
+uid="uid://wpc2a7b1v80o"
+path="res://.godot/imported/kuca_kamena_14.jpg-1545d0fc3df37dce429c3bd042f8d762.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
-"vram_texture": true
-}
-generator_parameters={
-"md5": "de9173a4bc15a2fb616b90df64b5801f"
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/models/zgrade/kuca_kamena_14.jpg"
-dest_files=["res://.godot/imported/kuca_kamena_14.jpg-1545d0fc3df37dce429c3bd042f8d762.etc2.ctex"]
+dest_files=["res://.godot/imported/kuca_kamena_14.jpg-1545d0fc3df37dce429c3bd042f8d762.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -27,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -41,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

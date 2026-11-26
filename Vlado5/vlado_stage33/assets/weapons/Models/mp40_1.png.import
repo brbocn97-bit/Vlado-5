@@ -7,9 +7,6 @@ path="res://.godot/imported/mp40_1.png-5798bbff3dc219e57b2a667f29bac8fa.ctex"
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "0e279e6320f12dccdc70de3d8aaca84b"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

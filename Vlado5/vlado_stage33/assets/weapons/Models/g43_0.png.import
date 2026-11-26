@@ -7,9 +7,6 @@ path="res://.godot/imported/g43_0.png-703d33af2896ea09765f97fb6115dc80.ctex"
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "306c48469e6edddc1b57ca340e97650a"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

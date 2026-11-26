@@ -17,6 +17,16 @@ var terrain_data: MontenegroTerrainData
 func _ready() -> void:
 	terrain_data = MontenegroTerrainData.new()
 
+	var loading_layer := _show_startup_loading()
+	# Dozvoli Android editoru da nacrta poruku prije proceduralne izgradnje.
+	await get_tree().process_frame
+
+	var android_editor_preview := OS.get_name() == "Android" and OS.has_feature("editor")
+	if android_editor_preview:
+		# Samo editor preview na telefonu; izvozni build ne koristi ove vrijednosti.
+		terrain.chunks_per_side = 4
+		terrain.quads_per_chunk = 22
+
 	terrain.build_terrain(terrain_data)
 	rocks.build_rocks(terrain_data)
 	water.build_water(terrain_data)
@@ -50,3 +60,28 @@ func _ready() -> void:
 	var gm := get_node_or_null("/root/GameManager")
 	if gm:
 		gm.apply_graphics_to_scene(sun)
+
+	if is_instance_valid(loading_layer):
+		loading_layer.queue_free()
+
+
+func _show_startup_loading() -> CanvasLayer:
+	var layer := CanvasLayer.new()
+	layer.name = "StartupLoading"
+	layer.layer = 1000
+	add_child(layer)
+
+	var background := ColorRect.new()
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background.color = Color(0.025, 0.04, 0.032, 1.0)
+	layer.add_child(background)
+
+	var label := Label.new()
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.text = "VLADO ŠIPČIĆ\nUČITAVANJE CRNE GORE...\n\nPrvo pokretanje u Godot editoru može potrajati."
+	label.add_theme_font_size_override("font_size", 28)
+	label.add_theme_color_override("font_color", Color(0.94, 0.86, 0.62))
+	background.add_child(label)
+	return layer

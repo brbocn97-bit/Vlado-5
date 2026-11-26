@@ -40,6 +40,7 @@ var _reloading_active: bool = false
 var _first_person_active: bool = false
 
 var _buttons: Dictionary = {}
+var _ui_scale: float = 1.0
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -57,30 +58,27 @@ func _update_layout() -> void:
 	var sz := get_viewport_rect().size
 	if sz.x <= 1.0 or sz.y <= 1.0:
 		sz = Vector2(1920.0, 1080.0)
-	var scale_ui := clampf(minf(sz.x / 1920.0, sz.y / 1080.0), 0.68, 1.25)
-	var joystick_r := max_joystick_radius * scale_ui
-	var inset_x := maxf(62.0 * scale_ui, sz.x * 0.08)
-	var inset_y := maxf(96.0 * scale_ui, sz.y * 0.10)
-	_default_center = Vector2(inset_x + joystick_r, sz.y - inset_y)
+	_ui_scale = clampf(minf(sz.x / 1536.0, sz.y / 864.0), 0.72, 1.18)
+	max_joystick_radius = 76.0 * _ui_scale
+	knob_radius = 29.0 * _ui_scale
+	_default_center = Vector2(maxf(112.0, sz.x * 0.125), sz.y - 138.0 * _ui_scale)
 	if _joy_finger == -1 and not _mouse_joy_active:
 		_joy_center = _default_center
 		_joy_knob = _default_center
 
-	# Right-thumb ergonomic button arc; all geometry is scaled and clamped to the safe area.
-	var rx := sz.x - maxf(48.0 * scale_ui, sz.x * 0.035)
-	var ry_bottom := sz.y - maxf(54.0 * scale_ui, sz.y * 0.055)
-	var r_small := 44.0 * scale_ui
-	var r_main := 54.0 * scale_ui
+	# Ergonomic thumb layout, scaled to viewport. Combat controls sit above
+	# movement controls and never overlap the map or top weapon panel.
+	var s := _ui_scale
 	_buttons = {
-		"jump": {"pos": Vector2(rx - r_main, ry_bottom - r_main), "r": r_main, "label": "JUMP"},
-		"crouch": {"pos": Vector2(rx - 205.0 * scale_ui, ry_bottom - 58.0 * scale_ui), "r": r_small, "label": "CUČANJE"},
-		"run": {"pos": Vector2(rx - 178.0 * scale_ui, ry_bottom - 178.0 * scale_ui), "r": r_small, "label": "TRČANJE"},
-		"sprint": {"pos": Vector2(rx - 82.0 * scale_ui, ry_bottom - 236.0 * scale_ui), "r": r_small, "label": "SPRINT"},
-		"rifle": {"pos": Vector2(rx - 82.0 * scale_ui, ry_bottom - 350.0 * scale_ui), "r": r_small, "label": "ORUŽJE"},
-		"aim": {"pos": Vector2(rx - 205.0 * scale_ui, ry_bottom - 310.0 * scale_ui), "r": r_small, "label": "CILJANJE"},
-		"view": {"pos": Vector2(rx - 320.0 * scale_ui, ry_bottom - 330.0 * scale_ui), "r": r_small * 0.96, "label": "PREGLED"},
-		"fire": {"pos": Vector2(rx - 320.0 * scale_ui, ry_bottom - 205.0 * scale_ui), "r": r_main, "label": "PALJBA"},
-		"reload": {"pos": Vector2(rx - 318.0 * scale_ui, ry_bottom - 92.0 * scale_ui), "r": r_small * 0.92, "label": "PUNJENJE"},
+		"jump": {"pos": Vector2(sz.x - 104.0*s, sz.y - 108.0*s), "r": 43.0*s, "label": "SKOK"},
+		"crouch": {"pos": Vector2(sz.x - 222.0*s, sz.y - 82.0*s), "r": 36.0*s, "label": "ČUČANJ"},
+		"run": {"pos": Vector2(sz.x - 204.0*s, sz.y - 190.0*s), "r": 36.0*s, "label": "TRK"},
+		"sprint": {"pos": Vector2(sz.x - 105.0*s, sz.y - 222.0*s), "r": 38.0*s, "label": "SPRINT"},
+		"rifle": {"pos": Vector2(sz.x - 105.0*s, sz.y - 330.0*s), "r": 36.0*s, "label": "ORUŽJE"},
+		"aim": {"pos": Vector2(sz.x - 205.0*s, sz.y - 308.0*s), "r": 38.0*s, "label": "NIŠAN"},
+		"view": {"pos": Vector2(sz.x - 305.0*s, sz.y - 320.0*s), "r": 34.0*s, "label": "POGLED"},
+		"fire": {"pos": Vector2(sz.x - 310.0*s, sz.y - 205.0*s), "r": 45.0*s, "label": "PALI"},
+		"reload": {"pos": Vector2(sz.x - 320.0*s, sz.y - 88.0*s), "r": 33.0*s, "label": "PUNI"},
 	}
 	queue_redraw()
 
@@ -249,21 +247,32 @@ func _reset_joystick() -> void:
 
 func _draw() -> void:
 	var font := ThemeDB.fallback_font
-	var base_col := Color(0.92, 0.92, 0.90, 0.22)
-	var border_col := Color(0.95, 0.95, 0.92, 0.58)
-	var knob_col := Color(0.96, 0.94, 0.88, 0.72) if (_joy_finger != -1 or _mouse_joy_active) else Color(0.92, 0.92, 0.90, 0.42)
+	var s := _ui_scale
+	var shadow := Color(0.0, 0.0, 0.0, 0.30)
+	var base_col := Color(0.035, 0.055, 0.060, 0.62)
+	var border_col := Color(0.82, 0.86, 0.80, 0.72)
+	var knob_col := Color(0.82, 0.86, 0.80, 0.76) if (_joy_finger != -1 or _mouse_joy_active) else Color(0.62, 0.69, 0.65, 0.58)
 
+	# Joystick: dark glass base, clear active thumb and subtle directional ticks.
+	draw_circle(_joy_center + Vector2(0, 3*s), max_joystick_radius + 2*s, shadow)
 	draw_circle(_joy_center, max_joystick_radius, base_col)
-	draw_arc(_joy_center, max_joystick_radius, 0.0, TAU, 48, border_col, 2.5, true)
+	draw_arc(_joy_center, max_joystick_radius, 0.0, TAU, 64, border_col, 2.0*s, true)
+	for a in range(0, 360, 45):
+		var rad := deg_to_rad(float(a))
+		draw_line(_joy_center + Vector2(cos(rad), sin(rad)) * (max_joystick_radius - 9*s),
+			_joy_center + Vector2(cos(rad), sin(rad)) * (max_joystick_radius - 3*s),
+			Color(0.88, 0.90, 0.84, 0.42), 1.3*s)
+	draw_circle(_joy_knob, knob_radius + 2*s, Color(0, 0, 0, 0.28))
 	draw_circle(_joy_knob, knob_radius, knob_col)
-	draw_arc(_joy_knob, knob_radius, 0.0, TAU, 36, border_col, 2.0, true)
-
+	draw_arc(_joy_knob, knob_radius, 0.0, TAU, 48, Color(0.98, 0.98, 0.91, 0.86), 1.8*s, true)
 	if font:
-		var stick_tag := "MOVE"
-		var s_size := font.get_string_size(stick_tag, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
-		draw_string(font, _joy_center + Vector2(-s_size.x * 0.5, max_joystick_radius + 20.0), stick_tag, HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.96, 0.95, 0.90, 0.82))
+		var stick_tag := "KRETANJE"
+		var fs := int(round(12*s))
+		var ts := font.get_string_size(stick_tag, HORIZONTAL_ALIGNMENT_CENTER, -1, fs)
+		draw_string(font, _joy_center + Vector2(-ts.x*0.5, max_joystick_radius + 18*s), stick_tag,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.95, 0.94, 0.86, 0.88))
 
-	for btn_id in ["crouch", "run", "sprint", "jump", "rifle", "aim", "view", "fire", "reload"]:
+	for btn_id in ["view", "aim", "rifle", "sprint", "run", "fire", "reload", "crouch", "jump"]:
 		if not _buttons.has(btn_id):
 			continue
 		var b: Dictionary = _buttons[btn_id]
@@ -271,71 +280,42 @@ func _draw() -> void:
 		var r: float = b["r"]
 		var label: String = b["label"]
 		var is_on := false
-		var active_fill := Color(0.24, 0.34, 0.22, 0.65)
-		var active_ring := Color(0.78, 0.88, 0.56, 0.95)
-		var has_sub: bool = btn_id in ["crouch", "run", "sprint", "rifle", "aim", "view"]
+		var fill := Color(0.055, 0.075, 0.078, 0.72)
+		var ring := Color(0.76, 0.82, 0.76, 0.72)
+		if btn_id == "run": is_on = _run_active
+		elif btn_id == "sprint": is_on = _sprint_active
+		elif btn_id == "crouch": is_on = _crouch_active
+		elif btn_id == "jump": is_on = _jump_highlight
+		elif btn_id == "rifle": is_on = _rifle_equipped
+		elif btn_id == "aim": is_on = _aim_active
+		elif btn_id == "fire": is_on = _fire_flash_t > 0.0
+		elif btn_id == "reload": is_on = _reloading_active
+		elif btn_id == "view": is_on = true
 
-		if btn_id == "run" and _run_active:
-			is_on = true
-			active_fill = Color(0.32, 0.46, 0.24, 0.72)
-			active_ring = Color(0.76, 0.92, 0.48, 0.98)
-		elif btn_id == "sprint" and _sprint_active:
-			is_on = true
-			active_fill = Color(0.56, 0.38, 0.16, 0.76)
-			active_ring = Color(0.98, 0.78, 0.38, 0.98)
-		elif btn_id == "crouch" and _crouch_active:
-			is_on = true
-			active_fill = Color(0.42, 0.44, 0.22, 0.74)
-			active_ring = Color(0.92, 0.88, 0.48, 0.98)
-		elif btn_id == "jump" and _jump_highlight:
-			is_on = true
-			active_fill = Color(0.45, 0.45, 0.40, 0.75)
-			active_ring = Color(0.98, 0.96, 0.86, 0.98)
-		elif btn_id == "rifle" and _rifle_equipped:
-			is_on = true
-			active_fill = Color(0.26, 0.42, 0.32, 0.76)
-			active_ring = Color(0.72, 0.95, 0.62, 0.98)
-		elif btn_id == "aim" and _aim_active:
-			is_on = true
-			active_fill = Color(0.58, 0.40, 0.16, 0.78)
-			active_ring = Color(0.98, 0.82, 0.38, 0.98)
-		elif btn_id == "fire":
-			if _fire_flash_t > 0.0:
-				is_on = true
-				active_fill = Color(0.85, 0.28, 0.16, 0.88)
-				active_ring = Color(1.0, 0.85, 0.42, 1.0)
-			elif _rifle_equipped:
-				is_on = true
-				active_fill = Color(0.58, 0.20, 0.16, 0.70)
-				active_ring = Color(0.96, 0.56, 0.38, 0.96)
-		elif btn_id == "reload" and _reloading_active:
-			is_on = true
-			active_fill = Color(0.50, 0.42, 0.20, 0.76)
-			active_ring = Color(0.98, 0.86, 0.48, 0.98)
-		elif btn_id == "view":
-			is_on = true
-			if _first_person_active:
-				active_fill = Color(0.20, 0.42, 0.56, 0.80)
-				active_ring = Color(0.56, 0.88, 1.0, 0.98)
+		if is_on:
+			if btn_id == "fire":
+				fill = Color(0.48, 0.12, 0.08, 0.88); ring = Color(1.0, 0.52, 0.30, 1.0)
+			elif btn_id == "aim" or btn_id == "sprint":
+				fill = Color(0.40, 0.28, 0.10, 0.86); ring = Color(0.98, 0.78, 0.36, 1.0)
+			elif btn_id == "view":
+				fill = Color(0.10, 0.30, 0.36, 0.88); ring = Color(0.48, 0.82, 0.90, 1.0)
 			else:
-				active_fill = Color(0.22, 0.28, 0.30, 0.56)
-				active_ring = Color(0.84, 0.90, 0.88, 0.80)
+				fill = Color(0.16, 0.32, 0.22, 0.86); ring = Color(0.64, 0.88, 0.58, 1.0)
+		elif btn_id == "fire":
+			fill = Color(0.28, 0.085, 0.06, 0.78); ring = Color(0.90, 0.38, 0.24, 0.88)
 
-		var idle_alpha := 0.28 if (btn_id in ["fire", "reload"] and not _rifle_equipped) else 0.48
-		var fill := active_fill if is_on else Color(0.14, 0.15, 0.14, idle_alpha)
-		var ring := active_ring if is_on else Color(0.92, 0.92, 0.88, 0.38 if (btn_id in ["fire", "reload"] and not _rifle_equipped) else 0.62)
-		var ring_w := 3.5 if is_on else 2.2
-
+		draw_circle(center + Vector2(0, 3*s), r + 2*s, shadow)
 		draw_circle(center, r, fill)
-		draw_arc(center, r, 0.0, TAU, 48, ring, ring_w, true)
-
+		draw_arc(center, r, 0.0, TAU, 56, ring, 2.4*s if is_on else 1.7*s, true)
+		draw_arc(center, r - 5*s, deg_to_rad(210), deg_to_rad(330), 24, Color(1,1,1,0.16), 1.0*s, true)
 		if font:
-			var fsize := 17 if btn_id in ["jump", "fire"] else 15
-			var tsz := font.get_string_size(label, HORIZONTAL_ALIGNMENT_CENTER, -1, fsize)
-			var text_pos := center + Vector2(-tsz.x * 0.5, tsz.y * 0.28)
-			draw_string(font, text_pos + Vector2(1, 1), label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, Color(0, 0, 0, 0.75))
-			draw_string(font, text_pos, label, HORIZONTAL_ALIGNMENT_LEFT, -1, fsize, Color(0.98, 0.97, 0.92, 0.96))
-			if has_sub:
-				var sub := ("FPS" if _first_person_active else "TPS") if btn_id == "view" else ("ON" if is_on else "OFF")
-				var ssz := font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, 12)
-				draw_string(font, center + Vector2(-ssz.x * 0.5, r - 12.0), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, ring)
+			var fs := int(round((14 if btn_id in ["jump", "fire"] else 11)*s))
+			var ts := font.get_string_size(label, HORIZONTAL_ALIGNMENT_CENTER, -1, fs)
+			var text_pos := center + Vector2(-ts.x*0.5, ts.y*0.32)
+			draw_string(font, text_pos + Vector2(1*s, 1*s), label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0,0,0,0.86))
+			draw_string(font, text_pos, label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.97,0.96,0.90,0.98))
+			if btn_id in ["view", "aim", "run", "sprint", "crouch", "rifle"]:
+				var sub := ("PRVO" if _first_person_active else "TREĆE") if btn_id == "view" else ("UKLJ." if is_on else "ISKLJ.")
+				var sfs := int(round(8*s))
+				var ss := font.get_string_size(sub, HORIZONTAL_ALIGNMENT_CENTER, -1, sfs)
+				draw_string(font, center + Vector2(-ss.x*0.5, r - 8*s), sub, HORIZONTAL_ALIGNMENT_LEFT, -1, sfs, ring)

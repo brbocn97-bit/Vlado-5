@@ -4,14 +4,14 @@ extends Node
 
 signal clue_added(clue_id: String)
 
-const TOTAL := 7
+const TOTAL := 6
 
 var clues: Array[String] = []
 var clues_available: Array[String] = [
 	"clue_homestead_letter",
 	"clue_kafana_ledger",
 	"clue_elder_map",
-	"clue_security_dispatch",
+	"clue_axis_dispatch",
 	"clue_partisan_orders",
 	"clue_mill_ledger",
 	"clue_cipher_logbook",

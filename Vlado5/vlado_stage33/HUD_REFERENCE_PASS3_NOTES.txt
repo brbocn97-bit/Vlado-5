@@ -1,0 +1,25 @@
+VLADO SIPCIC — HUD REFERENCE STYLE PASS 3
+==========================================
+
+Based on the user's supplied visual reference (Hope 101 mobile survival/action HUD).
+
+Added:
+- Screen-space CanvasLayer mounting for the interactive mini-map (upper-left).
+- Compact dark translucent field-status strip with bronze/gold accents.
+- Objective/field log card under the mini-map.
+- Compact bottom equipment/action strip.
+- Refined weapon/ammo panel to match the same dark field-instrument visual language.
+- Diagnostic telemetry moved away from the map and mission card.
+- The map opens large when tapped; tap outside / CLOSE returns to the inset.
+
+Design intent:
+- Similar information hierarchy and density to the supplied reference.
+- Original WWII Montenegro setting retained; no Hope 101 branding/art/assets copied.
+- Existing touch controls remain functional and are not replaced by decorative buttons.
+
+Caution:
+- The objective card currently displays generic area exploration text; it is a visual placeholder, not connected to a mission-state system.
+- Bottom equipment buttons are visual UI placeholders; they are not wired to inventory actions yet.
+- This is a HUD presentation pass, not a full replacement for all game systems.
+- Godot 4.7.2 runtime is unavailable here. No project import/boot/touch testing has been performed.
+- Test as a separate project and preserve the original ZIP.

@@ -1,0 +1,11 @@
+HUD Reference Style Pass 3 - Hotfix 1
+
+Fixed the parser/runtime error reported in ui/world_map.gd:
+- `vp` is already a Vector2 returned by get_viewport_rect().size.
+- Changed Rect2(Vector2.ZERO, vp.size) to Rect2(Vector2.ZERO, vp).
+
+This directly addresses the screenshot error:
+"Cannot find member 'size' in base 'Vector2'."
+
+No other project files were intentionally changed in this hotfix.
+Godot 4.7.2 is not installed in the build environment, so this fix was source-inspected but not engine-run validated.

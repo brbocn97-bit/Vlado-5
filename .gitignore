@@ -1,0 +1,47 @@
+# Godot editor and import cache
+.godot/
+**/.godot/
+.import/
+**/.import/
+
+# Build and export output
+/build/
+**/build/
+/dist/
+**/dist/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Android/Gradle local state
+.gradle/
+**/.gradle/
+local.properties
+
+# Blender backups and simulation caches
+*.blend1
+*.blend2
+*.blend@
+*.bphys
+*.blendcache/
+**/*.blendcache/
+*.vdb
+
+# Python/Codespaces local state
+.venv/
+venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.cache/
+**/.cache/
+.codespaces/
+.vscode-test/
+
+# Local/editor temporary files
+.DS_Store
+*.tmp
+*.bak
+*.swp

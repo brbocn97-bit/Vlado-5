@@ -7,9 +7,6 @@ path="res://.godot/imported/mauser_98_sporting_2.png-051382a2fd6a1a0a8894f695559
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "032874019ccacbd9c6361f774d9940d6"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

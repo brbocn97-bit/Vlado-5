@@ -1,0 +1,45 @@
+VLADO ŠIPČIĆ — FAZA 9, KRETANJE / ORUŽJE / ČIST HUD
+Datum: 2026-11-22
+
+WORKSPACE METODA
+- Puna radna kopija obnovljena je u /tmp iz provjerenog Faza 9 Drive checkpointa.
+- Rad je izveden po dijelovima, testiran, checkpointovan i uploadovan.
+- U trajnom Workspaceu ostaju samo status i mali izmijenjeni izvori; import cache, alati i raspakovana kopija se brišu.
+
+URAĐENO
+1. Automatski locomotion test na fizičkoj podlozi:
+   - idle/stop;
+   - walk 1.65 m/s;
+   - run 4.35 m/s;
+   - sprint 6.40 m/s i stamina;
+   - crouch walk 1.35 m/s;
+   - jump start/air/landing.
+2. Potvrđen rig: 54 kosti, 47 animacija i simetrični udovi.
+3. Dvoručno oružje više se ne oslanja na stari TwoBoneIK.
+   - weapon mount se rigidno kalibriše poslije animation crossfadea;
+   - Grip_R ide tačno u desnu šaku;
+   - osa Grip_R→Grip_L poravnava se sa položajem lijeve šake;
+   - kosti i skin se ne deformišu proceduralno, čime se izbjegava ranije uvijanje ruku.
+4. Representative grip audit prošao za MP40, MG42, Mauser 98, Thompson, MG34 i dvocijevku, kao i pistol/grenade/melee tok.
+5. Production HUD čišćenje:
+   - telemetry i editor controls su skriveni već u .tscn fajlu;
+   - Stage 4 streaming panel je editor-only i podrazumijevano ugašen;
+   - mobilno ROT calibration dugme je editor-only i podrazumijevano ugašeno;
+   - F5–F10 debug teleport je development-only.
+
+REZULTATI
+PHASE9_LOCOMOTION_DONE bad=0
+PHASE9_WEAPON_GRIP_DONE bad=0
+PHASE9_PRODUCTION_UI telemetry_hidden=true controls_hidden=true stream_absent=true rot_absent=true bad=0
+PHASE9_RIG_DONE bones=54 animations=47 bad=0
+PHASE9_VLADO_VISUAL_DONE bad=0
+PHASE3_31_DONE count=31 bad=0
+PHASE4_SWITCH_DONE bad=0
+PHASE4_COMBAT_DONE bad=0
+PHASE5_FLOW_DONE bad=0
+PHASE7_PHONE_UI bad=0
+PHASE8_QUALITY_DONE bad=0
+PHASE8_RELOAD ok=true
+
+NAPOMENA
+Automatski testovi potvrđuju logiku, rig i geometrijsko poravnanje. Završni izgled šaka i oružja mora se dodatno potvrditi novim screenshotom/video snimkom na fizičkom telefonu.

@@ -7,9 +7,6 @@ path="res://.godot/imported/maschinengewehr_mg_42_4.png-8d2316285800d809c561df7b
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "28bbeb3c13d123e8ccc4db8dc3ed2dcb"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

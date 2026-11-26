@@ -7,9 +7,6 @@ path="res://.godot/imported/zk383_1.png-ecdfa097a25bde6c14414d895f1d9ae6.ctex"
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "6e9a33a4cfe2cbc7513b413165599c5e"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

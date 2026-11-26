@@ -22,7 +22,7 @@ signal regions_ready()
 const REGION_SCRIPTS := {
 	"Krupa_Valley": "res://stage4/world/region_krupa_valley.gd",
 	"Crnca_Village": "res://stage4/world/region_crnca_village.gd",
-	"Security_Checkpoint": "res://stage4/world/region_security_checkpoint.gd",
+	"Axis_Checkpoint": "res://stage4/world/region_axis_checkpoint.gd",
 	"Durmitor_Forest_Hideout": "res://stage4/world/region_durmitor_hideout.gd",
 	"Krupa_Canyon_Crossings": "res://stage4/world/region_canyon_crossings.gd",
 	"Lovcen_High_Peaks": "res://stage4/world/region_lovcen_peaks.gd",

@@ -26,6 +26,7 @@ var lbl_note_title: Label
 var lbl_note_body: RichTextLabel
 var _note_timer := 0.0
 var _world: Stage4World
+@export var show_development_ui := false
 
 
 func _ready() -> void:
@@ -39,11 +40,12 @@ func _ready() -> void:
 	_build_prompt()
 	_build_note_panel()
 	_build_counter()
-	_build_stream_panel()
+	if show_development_ui and OS.has_feature("editor"):
+		_build_stream_panel()
 	call_deferred("_bind_missions")
 
-
-	_add_rotate_button()
+	if show_development_ui and OS.has_feature("editor"):
+		_add_rotate_button()
 
 func bind_world(w: Stage4World) -> void:
 	_world = w
@@ -232,7 +234,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			panel_note.visible = false
 			_note_timer = 0.0
 			get_viewport().set_input_as_handled()
-		if _world and event.keycode >= KEY_F5 and event.keycode <= KEY_F10:
+		if show_development_ui and OS.has_feature("editor") and _world and event.keycode >= KEY_F5 and event.keycode <= KEY_F10:
 			var idx: int = event.keycode - KEY_F5
 			var order := RegionData.REGION_IDS
 			if idx < order.size():

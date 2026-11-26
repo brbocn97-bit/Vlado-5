@@ -7,9 +7,6 @@ path="res://.godot/imported/bajonet_m1924_1.png-7fb60cc1d740fd32a64f16a35a77051b
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "a60809de72d1dcafb5bb1d4f65d0c090"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

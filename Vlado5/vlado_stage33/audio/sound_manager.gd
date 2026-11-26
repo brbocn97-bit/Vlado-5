@@ -10,25 +10,6 @@ var _wind_player: AudioStreamPlayer
 var _river_player: AudioStreamPlayer
 var _rng := RandomNumberGenerator.new()
 
-func _exit_tree() -> void:
-	for p in _sfx_players:
-		if is_instance_valid(p):
-			p.stop()
-			p.stream = null
-			p.free()
-	if _wind_player:
-		_wind_player.stop()
-		_wind_player.stream = null
-		_wind_player.free()
-	if _river_player:
-		_river_player.stop()
-		_river_player.stream = null
-		_river_player.free()
-	_wind_player = null
-	_river_player = null
-	_sfx_players.clear()
-	_streams.clear()
-
 func _ready() -> void:
 	_rng.seed = 195308
 	_build_streams()

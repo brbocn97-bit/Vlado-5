@@ -7,9 +7,6 @@ path="res://.godot/imported/litica_2.png-88f3598152121495e570ca413343c02e.ctex"
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "567cb5b048fb8d23e2d32380a1bd1616"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

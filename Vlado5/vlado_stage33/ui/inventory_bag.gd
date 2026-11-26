@@ -129,18 +129,15 @@ func _build_panel() -> void:
 	_panel = Panel.new()
 	_panel.name = "BagPanel"
 	_panel.visible = false
-	var sz: Vector2 = get_viewport().get_visible_rect().size
-	var panel_w := clampf(sz.x * 0.36, 360.0, 520.0)
-	var panel_h := clampf(sz.y * 0.58, 380.0, 620.0)
 	_panel.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	_panel.anchor_left = 1.0
 	_panel.anchor_top = 0.0
 	_panel.anchor_right = 1.0
 	_panel.anchor_bottom = 0.0
-	_panel.offset_left = -panel_w - 18
+	_panel.offset_left = -PANEL_W - 18
 	_panel.offset_top = 124
 	_panel.offset_right = -18
-	_panel.offset_bottom = 124 + panel_h
+	_panel.offset_bottom = 124 + PANEL_H
 	var psb := StyleBoxFlat.new()
 	psb.bg_color = Color(0.10, 0.10, 0.09, 0.96)
 	psb.border_color = Color(0.72, 0.58, 0.32, 1.0)

@@ -1,0 +1,4 @@
+PRIMARY TARGET: Samsung Galaxy S25 Ultra / Android ARM64
+Renderer: Godot Mobile
+BlueStacks is not a supported editor target and is not part of this build.
+Physical-device FPS, thermals and memory remain pending until tested on the phone.

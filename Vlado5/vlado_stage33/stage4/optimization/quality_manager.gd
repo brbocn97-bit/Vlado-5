@@ -1,155 +1,171 @@
 extends Node
-## QualityManager — autoload. One place that decides how heavy the game runs.
-##
-## Stage 4 targets the Galaxy S25 Ultra (Adreno 830, 12 GB) but the same build
-## must stay playable on weaker hardware, so quality is set once at boot from a
-## tier list and then every subsystem reads it instead of hard-coding its own
-## constants.
-##
-## Tiers
-##   ULTRA  desktop                  : full vegetation, 460 m foliage draw,
-##                                    shadows 105 m, MSAA 2x
-##   HIGH   high-end phone           : 320 m foliage, shadows 70 m, no MSAA
-##   MEDIUM Web / mid-range          : 200 m foliage, shadows 45 m, no MSAA
-##   LOW    fallback                 : 120 m foliage, no shadows, no grass
-##
-## Everything is applied through the properties the world scripts already
-## expose, so no other file has to know about quality.
+## Runtime phone quality manager. LOW/MEDIUM/HIGH are user-selectable and
+## persisted. ULTRA remains desktop-only and is never auto-selected on Android.
+
+signal quality_changed(tier: int, tier_name: String)
 
 enum Tier { LOW, MEDIUM, HIGH, ULTRA }
+const SAVE_PATH := "user://graphics_quality.cfg"
+const MOBILE_MAX_TIER := Tier.HIGH
 
-var tier: Tier = Tier.HIGH
-var tier_name := "HIGH"
-
-# foliage / prop draw distance in metres
-var foliage_range := 320.0
-var detail_range := 190.0
-var landmark_range := 1100.0
-
-# shadows
-var shadow_distance := 70.0
+var tier: Tier = Tier.MEDIUM
+var tier_name := "MEDIUM"
+var foliage_range := 160.0
+var detail_range := 120.0
+var landmark_range := 850.0
+var shadow_distance := 30.0
 var shadow_enabled := true
-
-# rendering
 var msaa := Viewport.MSAA_DISABLED
-var screen_scale := 1.0
-var target_fps := 60
-
+var screen_scale := 0.80
+var target_fps := 45
 var _applied := false
-
+var _user_selected := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_choose_tier()
+	if not _load_saved_tier():
+		_choose_automatic_tier()
+	_choose_tier_values()
 	apply()
-	print("[Quality] tier=%s foliage=%.0fm shadows=%.0fm msaa=%d fps=%d" % [
-		tier_name, foliage_range, shadow_distance, msaa, target_fps])
+	print("[Quality] tier=%s scale=%.2f foliage=%.0fm shadows=%.0fm fps=%d saved=%s" % [tier_name, screen_scale, foliage_range, shadow_distance, target_fps, str(_user_selected)])
 
+func _load_saved_tier() -> bool:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return false
+	var cfg := ConfigFile.new()
+	if cfg.load(SAVE_PATH) != OK:
+		return false
+	var value := int(cfg.get_value("graphics", "tier", -1))
+	if value < int(Tier.LOW) or value > int(Tier.HIGH):
+		return false
+	tier = value as Tier
+	_user_selected = true
+	return true
 
-func _choose_tier() -> void:
-	# Web exports can run on software renderers and must not inherit desktop ULTRA.
-	if OS.get_name() == "Web":
-		tier = Tier.MEDIUM
-	# Android: infer from the GPU string, which is reliable for Adreno/Mali.
-	elif OS.get_name() == "Android":
-		var gpu: String = RenderingServer.get_video_adapter_name().to_upper()
-		# ULTRA (460 m foliage, MSAA 2x) is desktop-only; flagship phones cap at HIGH.
-		if "IMMORTALIS" in gpu or "ADRENO 8" in gpu or "ADRENO 7" in gpu \
-				or "ADRENO 6" in gpu or "MALI-G7" in gpu or "MALI-G6" in gpu \
-				or "XCLOUD" in gpu or "APPLE" in gpu:
+func _save_tier() -> void:
+	var cfg := ConfigFile.new()
+	cfg.set_value("graphics", "tier", int(tier))
+	cfg.set_value("graphics", "name", tier_name)
+	cfg.save(SAVE_PATH)
+
+func _choose_automatic_tier() -> void:
+	if OS.get_name() == "Android":
+		var gpu := RenderingServer.get_video_adapter_name().to_upper()
+		if "ADRENO 8" in gpu or "ADRENO 7" in gpu or "IMMORTALIS" in gpu or "XCLIPSE" in gpu:
 			tier = Tier.HIGH
-		elif "ADRENO" in gpu or "MALI" in gpu or "POWERVR" in gpu:
+		elif "ADRENO 6" in gpu or "ADRENO 5" in gpu or "MALI-G7" in gpu or "MALI-G6" in gpu or "MALI-G5" in gpu:
 			tier = Tier.MEDIUM
 		else:
-			tier = Tier.MEDIUM
+			tier = Tier.LOW
 	elif OS.has_feature("mobile"):
-		tier = Tier.HIGH
+		tier = Tier.MEDIUM
 	else:
 		tier = Tier.ULTRA
-	_set_tier_values()
 
-
-func _set_tier_values() -> void:
-	tier_name = ["LOW", "MEDIUM", "HIGH", "ULTRA"][tier]
+func _choose_tier_values() -> void:
+	tier_name = ["LOW", "MEDIUM", "HIGH", "ULTRA"][int(tier)]
 	match tier:
 		Tier.LOW:
-			foliage_range = 120.0
-			detail_range = 90.0
+			foliage_range = 80.0
+			detail_range = 70.0
+			landmark_range = 650.0
 			shadow_distance = 0.0
 			shadow_enabled = false
 			msaa = Viewport.MSAA_DISABLED
-			screen_scale = 0.8
-			target_fps = 60
+			screen_scale = 0.65
+			target_fps = 30
 		Tier.MEDIUM:
-			foliage_range = 200.0
-			detail_range = 140.0
-			shadow_distance = 45.0
+			foliage_range = 160.0
+			detail_range = 120.0
+			landmark_range = 850.0
+			shadow_distance = 30.0
 			shadow_enabled = true
 			msaa = Viewport.MSAA_DISABLED
-			screen_scale = 0.9
-			target_fps = 60
+			screen_scale = 0.80
+			target_fps = 45
 		Tier.HIGH:
-			foliage_range = 320.0
-			detail_range = 190.0
-			shadow_distance = 70.0
+			foliage_range = 280.0
+			detail_range = 180.0
+			landmark_range = 1100.0
+			shadow_distance = 60.0
 			shadow_enabled = true
 			msaa = Viewport.MSAA_DISABLED
 			screen_scale = 1.0
 			target_fps = 60
 		Tier.ULTRA:
-			foliage_range = 460.0
-			detail_range = 190.0
-			shadow_distance = 105.0
+			foliage_range = 420.0
+			detail_range = 220.0
+			landmark_range = 1400.0
+			shadow_distance = 95.0
 			shadow_enabled = true
 			msaa = Viewport.MSAA_2X
 			screen_scale = 1.0
 			target_fps = 60
 
+func set_tier(new_tier: int, save_choice: bool = true) -> void:
+	var max_tier := int(MOBILE_MAX_TIER) if OS.has_feature("mobile") or OS.get_name() == "Android" else int(Tier.ULTRA)
+	tier = clampi(new_tier, int(Tier.LOW), max_tier) as Tier
+	_user_selected = save_choice
+	_choose_tier_values()
+	if save_choice:
+		_save_tier()
+	apply()
+	quality_changed.emit(int(tier), tier_name)
+	print("[Quality] selected %s — %s" % [tier_name, get_profile_summary()])
 
-## Applies the tier to whatever is currently in the tree. Safe to call again
-## after a scene reload.
+func cycle_tier() -> void:
+	# Phone UI intentionally cycles only LOW/MEDIUM/HIGH.
+	set_tier((int(tier) + 1) % 3, true)
+
+func reset_to_automatic() -> void:
+	_user_selected = false
+	_choose_automatic_tier()
+	_choose_tier_values()
+	var cfg := ConfigFile.new()
+	cfg.set_value("graphics", "tier", -1)
+	cfg.save(SAVE_PATH)
+	apply()
+	quality_changed.emit(int(tier), tier_name)
+
+func get_profile_summary() -> String:
+	return "%d FPS • %d%% rezolucije • trava %.0fm • sjenke %.0fm" % [target_fps, int(screen_scale * 100.0), foliage_range, shadow_distance]
+
 func apply() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return
 	_applied = true
 	Engine.max_fps = target_fps
-	# shadows
+	var vp := tree.root.get_viewport()
+	if vp:
+		vp.msaa_3d = msaa
+		vp.scaling_3d_scale = screen_scale
 	var sun := tree.root.find_child("SunLight", true, false) as DirectionalLight3D
 	if sun:
 		sun.shadow_enabled = shadow_enabled
 		if shadow_enabled:
 			sun.directional_shadow_max_distance = shadow_distance
-	# viewport knobs
-	var vp := tree.root.get_viewport()
-	if vp:
-		vp.msaa_3d = msaa
-		vp.scaling_3d_scale = screen_scale
+	var vegetation := tree.root.find_child("MontenegroVegetation", true, false)
+	if vegetation and vegetation.has_method("apply_quality_scale"):
+		vegetation.call("apply_quality_scale", mini(int(tier), int(Tier.HIGH)))
 	_apply_to_vegetation()
-
 
 func _apply_to_vegetation() -> void:
 	var tree := get_tree()
 	if tree == null:
 		return
-	var n := 0
-	# Trava i zbunje imaju SVOJE distance (105 m / 135 m) — ne smiju se
-	# razvlaciti na foliage_range, jer bi se crtalo 4x vise vlati nego treba.
-	var grass_end := foliage_range
-	var shrub_end := foliage_range
+	var grass_end := 42.0
+	var shrub_end := 58.0
 	match tier:
 		Tier.LOW:
-			grass_end = 55.0
-			shrub_end = 75.0
+			grass_end = 42.0; shrub_end = 58.0
 		Tier.MEDIUM:
-			grass_end = 78.0
-			shrub_end = 100.0
+			grass_end = 72.0; shrub_end = 92.0
 		Tier.HIGH:
-			grass_end = 95.0
-			shrub_end = 125.0
+			grass_end = 95.0; shrub_end = 125.0
 		_:
-			grass_end = 105.0
-			shrub_end = 135.0
+			grass_end = 110.0; shrub_end = 145.0
+	var n := 0
 	for mi in tree.root.find_children("*", "MultiMeshInstance3D", true, false):
 		var mmi := mi as MultiMeshInstance3D
 		if mmi == null:
@@ -160,20 +176,9 @@ func _apply_to_vegetation() -> void:
 			end_d = grass_end
 		elif nm.begins_with("Shrubs_"):
 			end_d = shrub_end
-		elif nm.begins_with("PineNear_") or nm.begins_with("BeechNear_"):
-			end_d = minf(foliage_range, 220.0)
-		elif nm.begins_with("PineFar_") or nm.begins_with("BeechFar_"):
-			end_d = minf(foliage_range, 380.0)
 		mmi.visibility_range_end = end_d
 		mmi.visibility_range_end_margin = end_d * 0.12
 		mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		n += 1
 	if n > 0:
-		print("[Quality] vegetation ranges set on %d MultiMesh nodes (grass %.0fm, shrubs %.0fm, ostalo %.0fm)" % [n, grass_end, shrub_end, foliage_range])
-
-
-## Called by the HUD/settings screen.
-func cycle_tier() -> void:
-	tier = ((tier + 1) % 4) as Tier
-	_set_tier_values()
-	apply()
+		print("[Quality] vegetation nodes=%d grass=%.0fm shrubs=%.0fm other=%.0fm" % [n, grass_end, shrub_end, foliage_range])

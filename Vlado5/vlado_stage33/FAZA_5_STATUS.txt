@@ -1,0 +1,32 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 5
+Datum: 2026-11-11
+Godot: 4.7.2 stable
+
+CILJ
+Dovršiti posebne baked kategorije za posljednja dva arsenalska tipa: M24 Stielhandgranate i Bajonet M1924/Kama.
+
+URAĐENO
+- Model sada sadrži 47 animacija.
+- Dodani offline baked klipovi GrenadeIdle, GrenadeThrow, MeleeIdle i MeleeAttack.
+- Dodan poseban animator routing za hold_style grenade i melee.
+- Nema runtime IK-a niti proceduralnog rastezanja ruku.
+- M24 projektil više se ne stvara prije animacije: release je sinhronizovan 0.18 s nakon početka GrenadeThrow.
+- Automatski reload bombe počinje tek poslije release faze.
+- Bajonet/Kama koristi vlastitu baked thrust akciju; melee udar ne troši municiju.
+
+PROVJERE
+- Godot 4.7.2 editor/import: status 0, bez parse/script/compile grešaka.
+- OpenGL render: GrenadeIdle, GrenadeThrow, MeleeIdle i MeleeAttack — 4/4 očekivana statea, status 0.
+- Special flow test: bad=0, status 0.
+  · bomba prije [1,4], prije release 0 projektila, poslije release 1 projektil;
+  · nakon reload-a [1,3];
+  · melee [1,1] prije i poslije, MeleeAttack potvrđen.
+- Regresija 31-slot arsenala: count=31 bad=0.
+- Regresija category switch: bad=0.
+- Regresija firearm combat toka: bad=0.
+- Main runtime: 20 sekundi bez prijavljenih grešaka; kontrolisano zaustavljen timeoutom.
+
+OGRANIČENJA
+- Bacanje je kratka kategorijska animacija i još nema zaseban prikaz izvlačenja osigurača/kapisle.
+- Nije testirano na fizičkom Samsung Galaxy S25 Ultra uređaju.
+- Ovo je razvojni checkpoint, ne završni Android build.

@@ -7,9 +7,6 @@ path="res://.godot/imported/stijena_kosa_2.png-5462b8146df30884674632cf163f90d1.
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "da0116101c087141ba66e428581f377d"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

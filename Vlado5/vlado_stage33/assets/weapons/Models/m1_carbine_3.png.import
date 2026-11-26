@@ -7,9 +7,6 @@ path="res://.godot/imported/m1_carbine_3.png-345183b3b5b860bdf1a9906e94cb6b96.ct
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "a80a1a3925039814a5babf0b434aa5bb"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

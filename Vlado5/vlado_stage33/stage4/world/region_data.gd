@@ -18,9 +18,9 @@ const REGIONS := [
 		"bounds": Rect2(-640.0, -180.0, 480.0, 360.0),
 	},
 	{
-		"id": "Security_Checkpoint",
-		"name": "Sigurnosni punkt Raskršće",
-		"subtitle": "Post-war Security Checkpoint",
+		"id": "Axis_Checkpoint",
+		"name": "Vojni punkt Raskršće",
+		"subtitle": "Axis Checkpoint",
 		"center": Vector2(340.0, -90.0),
 		"bounds": Rect2(160.0, -240.0, 500.0, 360.0),
 	},
@@ -54,7 +54,7 @@ const PLAYER_SPAWN_XZ := Vector2(-5.0, 9.5)
 const REGION_IDS := [
 	"Krupa_Valley",
 	"Crnca_Village",
-	"Security_Checkpoint",
+	"Axis_Checkpoint",
 	"Durmitor_Forest_Hideout",
 	"Krupa_Canyon_Crossings",
 	"Lovcen_High_Peaks",

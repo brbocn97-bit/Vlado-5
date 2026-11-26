@@ -227,14 +227,25 @@ func _mount_root_for_weapon() -> Node3D:
 	_mount_root = Node3D.new()
 	_mount_root.name = "Stage33WeaponMount"
 	if _skel:
-		_skel.add_child(_mount_root)
+		var socket := _skel.get_node_or_null("RightHandWeaponSocket") as BoneAttachment3D
+		if socket == null:
+			socket = BoneAttachment3D.new(); socket.name = "RightHandWeaponSocket"; socket.bone_name = &"RightHand"; _skel.add_child(socket)
+		socket.add_child(_mount_root)
 		var anim := _animator_ref()
-		if anim:
-			anim.set_weapon_mount_node(_mount_root)
-	elif player:
-		player.add_child(_mount_root)
+		if anim: anim.set_weapon_mount_node(_mount_root)
+	elif player: player.add_child(_mount_root)
 	return _mount_root
 
+
+func _configure_mount_for_style(style: String) -> void:
+	var mount := _mount_root_for_weapon(); mount.position = Vector3.ZERO
+	match style:
+		"pistol": mount.rotation_degrees = Vector3(21.559, -118.542, -88.847)
+		"rifle", "heavy":
+			mount.position = Vector3(-0.015974, 0.041719, -0.050044)
+			mount.rotation_degrees = Vector3(77.787, -176.465, 167.626)
+		"grenade", "melee": mount.rotation_degrees = Vector3(21.559, -118.542, -88.847)
+		_: mount.rotation_degrees = Vector3.ZERO
 
 func _load_model_for(def: WeaponDef) -> Node3D:
 	var path := _resolve_model_path(def)
@@ -247,37 +258,8 @@ func _load_model_for(def: WeaponDef) -> Node3D:
 	var raw_inst := scene.instantiate() as Node3D
 	if def.is_sketchfab:
 		return _standardize_sketchfab(raw_inst, def)
-	if def.slot != SLOT_M48:
-		return _standardize_fallback(raw_inst, def)
 	raw_inst.name = "Model_" + def.id
 	return raw_inst
-
-
-## Normalise raw GLB weapons that do not provide Sketchfab-style Grip/Muzzle
-## markers. This keeps every arsenal model at a real-world target length and
-## gives the raycast/recoil systems stable marker positions.
-func _standardize_fallback(raw: Node3D, def: WeaponDef) -> Node3D:
-	var aabb := _combined_aabb(raw)
-	var longest: float = maxf(aabb.size.x, maxf(aabb.size.y, aabb.size.z))
-	var s: float = def.target_length_m / longest if longest > 0.0001 else 1.0
-	def.applied_scale = s
-	def.raw_size = aabb.size
-
-	var wrapper := Node3D.new()
-	wrapper.name = "Model_" + def.id
-	raw.scale = Vector3(s, s, s)
-	raw.position = -(aabb.position + aabb.size * 0.5) * s
-	wrapper.add_child(raw)
-
-	var grip_x := 0.0
-	var grip_y := -0.02
-	var grip_z := 0.18 if def.hold_style != "pistol" else 0.08
-	_add_marker(wrapper, "Grip_R", Vector3(grip_x, grip_y, grip_z))
-	_add_marker(wrapper, "Grip_L", Vector3(0.0, grip_y, -0.22))
-	_add_marker(wrapper, "Muzzle", Vector3(0.0, 0.02, -def.target_length_m * 0.52))
-	_add_marker(wrapper, "Eject", Vector3(0.025, 0.055, -0.06))
-	_add_marker(wrapper, "IronSight", Vector3(0.0, 0.075, -0.08))
-	return wrapper
 
 
 func _standardize_sketchfab(raw: Node3D, def: WeaponDef) -> Node3D:
@@ -389,6 +371,7 @@ func show_weapon(slot: int, _instant := false) -> void:
 		anim.set_weapon_mount_node(_mount_root_for_weapon())
 		var gl_local := def.sketchfab_grip_l_local
 		anim.set_weapon_hold_profile(def.hold_style, gl_local)
+	_configure_mount_for_style(def.hold_style)
 
 	if slot == SLOT_M48:
 		_sync_fps_visibility(slot)
@@ -423,8 +406,42 @@ func show_weapon(slot: int, _instant := false) -> void:
 			anim.set_weapon_hold_profile(def.hold_style, gl_mk2.position)
 
 	held[slot].visible = true
+	if def.hold_style in ["rifle", "heavy"]:
+		_calibrate_two_hand_weapon.call_deferred(slot)
 	_ensure_fps_weapon(def)
 	_sync_fps_visibility(slot)
+
+
+func _calibrate_two_hand_weapon(slot: int) -> void:
+	# Ne pomjeramo kosti niti vraćamo problematični TwoBoneIK. Umjesto toga
+	# rigidno poravnamo Grip_R sa desnom šakom i osu Grip_R→Grip_L sa stvarnim
+	# razmakom šaka iz baked rifle/heavy animacije. Tako ruke ostaju stabilne.
+	# Sačekaj da AnimationTree završi crossfade u RifleIdle/HeavyIdle pozi.
+	for _i in 14:
+		await get_tree().process_frame
+	if active != slot or not held.has(slot) or _skel == null:
+		return
+	var model := held[slot] as Node3D
+	if model == null or not is_instance_valid(model):
+		return
+	var grip_r := model.find_child("Grip_R", true, false) as Node3D
+	var grip_l := model.find_child("Grip_L", true, false) as Node3D
+	if grip_r == null or grip_l == null:
+		return
+	var right_idx := _skel.find_bone("RightHand")
+	var left_idx := _skel.find_bone("LeftHand")
+	if right_idx < 0 or left_idx < 0:
+		return
+	var right_world := _skel.global_transform * _skel.get_bone_global_pose(right_idx).origin
+	var left_world := _skel.global_transform * _skel.get_bone_global_pose(left_idx).origin
+	var current_vec := grip_l.global_position - grip_r.global_position
+	var desired_vec := left_world - right_world
+	if current_vec.length_squared() < 0.0001 or desired_vec.length_squared() < 0.0001:
+		return
+	var correction := Quaternion(current_vec.normalized(), desired_vec.normalized())
+	_mount_root.global_basis = Basis(correction) * _mount_root.global_basis
+	# Rotacija pomjera Grip_R oko mount ishodišta; vrati ga tačno u desnu šaku.
+	_mount_root.global_position += right_world - grip_r.global_position
 
 
 func _ensure_fps_weapon(def: WeaponDef) -> void:
@@ -507,9 +524,6 @@ func give_weapon(slot: int, ammo_reserve := -1) -> bool:
 	if d:
 		var res: int = ammo_reserve if ammo_reserve >= 0 else d.starting_reserve
 		_ammo[slot] = [d.mag_capacity, res]
-	var ms := get_tree().root.get_node_or_null("MissionSystem")
-	if ms and ms.has_method("notify_weapon"):
-		ms.notify_weapon(slot)
 	return true
 
 
@@ -519,10 +533,6 @@ func unlock_full_arsenal() -> void:
 			owned.append(d.slot)
 			_ammo[d.slot] = [d.mag_capacity, d.starting_reserve]
 	owned.sort()
-	var ms := get_tree().root.get_node_or_null("MissionSystem")
-	if ms and ms.has_method("notify_weapon"):
-		ms.notify_weapon(SLOT_MP40)
-		ms.notify_weapon(SLOT_MG42)
 	weapon_changed.emit(active_def())
 
 
@@ -538,17 +548,28 @@ func switch_to(slot: int) -> bool:
 	if not owned.has(slot) or slot == active or _swapping:
 		return false
 	_swapping = true
-	_swap_timer = 0.25
-	await get_tree().create_timer(0.12).timeout
-	active = slot
-	_swapping = false
+	_swap_timer = 0.54
 	_reloading = false
 	_reload_timer = 0.0
+	# The old category owns the baked holster pose until its model is hidden.
+	if player:
+		player.weapon_action = "Holster"
+	await get_tree().create_timer(0.18).timeout
+	active = slot
 	show_weapon(slot)
+	# show_weapon updates the hold category first, so the new weapon receives
+	# its own baked equip pose instead of sharing the previous category's pose.
+	if player:
+		player.weapon_action = "Equip"
 	var d := active_def()
 	if d and _sound:
 		_sound.play_equip(true)
 	weapon_changed.emit(d)
+	await get_tree().create_timer(0.36).timeout
+	if player and player.weapon_action == "Equip":
+		player.weapon_action = ""
+	_swapping = false
+	_swap_timer = 0.0
 	return true
 
 
@@ -627,10 +648,15 @@ func _fire() -> void:
 	if d.is_explosive:
 		if _sound:
 			_sound.play_equip(false)
-		_spawn_grenade_projectile(muzzle, (dir + Vector3(0, 0.24, 0)).normalized() * 18.0, d.damage)
+		_queue_grenade_release(muzzle, (dir + Vector3(0, 0.24, 0)).normalized() * 18.0, d.damage)
+		_recoil_timer = 0.42
+		if player:
+			player.weapon_action = "Fire"
 		shot_fired.emit()
+		# Preserve the baked throw through its release frame; only then begin
+		# the automatic one-round grenade reload.
 		if int(a[0]) == 0 and int(a[1]) > 0:
-			reload()
+			_queue_grenade_reload()
 		if player.has_method("notify_weapon_fired"):
 			player.notify_weapon_fired(true)
 		return
@@ -685,6 +711,17 @@ func _fire() -> void:
 		player.notify_weapon_fired(player.is_aiming)
 
 
+func _queue_grenade_release(origin: Vector3, velocity: Vector3, damage: float) -> void:
+	await get_tree().create_timer(0.18).timeout
+	_spawn_grenade_projectile(origin, velocity, damage)
+
+
+func _queue_grenade_reload() -> void:
+	await get_tree().create_timer(0.44).timeout
+	if active_def() != null and active_def().is_explosive and not _reloading:
+		reload()
+
+
 func _play_fire_sound(sound_key: String) -> void:
 	if _sound == null:
 		return
@@ -707,8 +744,8 @@ func _apply_hit_damage(col: Object, pos: Vector3, normal: Vector3, dmg: float, o
 	var surf := "dirt"
 	var is_tgt := false
 	var dist := player.global_position.distance_to(pos) if player else 0.0
-	if col is PostWarEnemy:
-		(col as PostWarEnemy).take_damage(dmg)
+	if col is GermanSoldier:
+		(col as GermanSoldier).take_damage(dmg)
 		surf = "wood"
 	elif col is ShootingTarget:
 		var st := col as ShootingTarget
@@ -772,8 +809,8 @@ func _detonate_grenade(pos: Vector3, dmg: float) -> void:
 
 	# AoE damage to enemies & shooting targets within 6 m
 	for n in get_tree().get_nodes_in_group("enemies"):
-		if n is PostWarEnemy and (n as Node3D).global_position.distance_to(pos) <= 6.5:
-			(n as PostWarEnemy).take_damage(dmg)
+		if n is GermanSoldier and (n as Node3D).global_position.distance_to(pos) <= 6.5:
+			(n as GermanSoldier).take_damage(dmg)
 	var root_n := get_tree().current_scene
 	if root_n:
 		for st in root_n.find_children("*", "ShootingTarget", true, false):

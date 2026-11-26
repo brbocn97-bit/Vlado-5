@@ -1,0 +1,28 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 7 PHONE UI
+Datum: 2026-11-11
+Godot: 4.7.2 stable
+Primarni cilj: Samsung Galaxy S25 Ultra / Android ARM64
+
+URAĐENO
+- Razvoj vraćen na glavni Godot Mobile renderer; BlueStacks više nije razvojni cilj.
+- Developer telemetry i editor-only dugmad uklonjeni su sa gameplay HUD-a.
+- Health, stamina, municija, crosshair i hitmarker ostaju aktivni.
+- Status panel premješten je u sigurnu gornju desnu zonu, bez preklapanja sa mission karticom, top status trakom i touch kontrolama.
+- Postojećih devet touch dugmadi i dinamički joystick zadržani su funkcionalni.
+
+RESPONSIVE TESTOVI
+- 1920x1080: 9 dugmadi, fire signal 1, joystick events 3, bad=0.
+- 2340x1080 (široki telefonski format): bad=0.
+- 2400x1080: bad=0.
+- Provjereni bounds, međusobna preklapanja dugmadi, preklapanja sa svim HUD panelima, fire press/release i joystick drag/reset.
+
+REGRESIJE
+- Godot editor/import: status 0.
+- 31-slot arsenal: count=31 bad=0.
+- Weapon switch: bad=0.
+- Firearm combat flow: bad=0.
+- Grenade/melee flow: bad=0.
+- Main runtime 20 s bez prijavljenih parse/script/compile/runtime grešaka; kontrolisani timeout.
+
+OGRANIČENJE
+Nije pokrenuto na fizičkom Galaxy S25 Ultra uređaju. Stvarni touch feel, FPS, RAM i termalno ponašanje ostaju za test na telefonu.

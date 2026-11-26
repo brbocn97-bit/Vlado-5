@@ -7,9 +7,6 @@ path="res://.godot/imported/lovacka_dvocijevka_2.png-376d78058c57e7df328a9a4b12b
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "a60809de72d1dcafb5bb1d4f65d0c090"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

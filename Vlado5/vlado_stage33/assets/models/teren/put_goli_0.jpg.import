@@ -2,24 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://colxtn3eb147i"
-path.etc2="res://.godot/imported/put_goli_0.jpg-ba9be7246c67ed245f680ffb4c3d6e4d.etc2.ctex"
+uid="uid://55unsupxh7tq"
+path="res://.godot/imported/put_goli_0.jpg-ba9be7246c67ed245f680ffb4c3d6e4d.ctex"
 metadata={
-"imported_formats": ["etc2_astc"],
-"vram_texture": true
-}
-generator_parameters={
-"md5": "ab0bad2bc930d4abc990d7837940549a"
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://assets/models/teren/put_goli_0.jpg"
-dest_files=["res://.godot/imported/put_goli_0.jpg-ba9be7246c67ed245f680ffb4c3d6e4d.etc2.ctex"]
+dest_files=["res://.godot/imported/put_goli_0.jpg-ba9be7246c67ed245f680ffb4c3d6e4d.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -27,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
@@ -41,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

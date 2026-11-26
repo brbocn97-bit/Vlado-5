@@ -4,7 +4,7 @@ extends Node
 ## Structure: 3 missions, each a chain of objectives that span the six regions.
 ## Objectives are driven by signals the rest of the game already emits:
 ##   · clue found          -> Stage4Ledger.add_clue
-##   · opponent killed     -> Stage4Ledger.report_kill / PostWarEnemy.died
+##   · soldier killed      -> Stage4Ledger.report_kill / GermanSoldier.died
 ##   · weapon recovered    -> WeaponArsenal.give_weapon
 ##   · region entered      -> WorldStreamer.active_region_changed
 ## so no other system has to know missions exist.
@@ -18,8 +18,8 @@ signal all_missions_completed()
 const MISSIONS := [
 	{
 		"id": "m1_krupa",
-		"title": "Fikcionalna demonstracija — Dolina Krupe",
-		"brief": "FIKTIVNI TOK MISIJE: Vlado prelazi selo i prati tragove koji pokreću patrolu.",
+		"title": "Dolina Krupe",
+		"brief": "Nađi tragove o očevoj jedinici i saznaj šta čuvaju na punktu.",
 		"objectives": [
 			{"id": "clue_homestead", "text": "Pretraži kuću Šipčića", "type": "clue", "target": "clue_homestead_letter"},
 			{"id": "clue_kafana", "text": "Pročitaj kafansku knjigu", "type": "clue", "target": "clue_kafana_ledger"},
@@ -32,8 +32,8 @@ const MISSIONS := [
 		"brief": "Selo zna više nego što govori. Kapitulacija straže otvara drum.",
 		"objectives": [
 			{"id": "clue_elder", "text": "Uzmi starješinu kartu straža", "type": "clue", "target": "clue_elder_map"},
-			{"id": "kill_checkpoint", "text": "Razbiti patrolu na sigurnosnom punktu (4)", "type": "kills", "target": 4},
-			{"id": "clue_security", "text": "Pronađi zapis pretresa OZNA-e", "type": "clue", "target": "clue_security_dispatch"},
+			{"id": "kill_checkpoint", "text": "Likvidiraj stražu na punktu (4)", "type": "kills", "target": 4},
+			{"id": "clue_axis", "text": "Zaploti njemačku depešu", "type": "clue", "target": "clue_axis_dispatch"},
 		],
 	},
 	{
@@ -42,7 +42,8 @@ const MISSIONS := [
 		"brief": "Partizani čekaju u šumi. Donosi im dokaze i oružje.",
 		"objectives": [
 			{"id": "clue_orders", "text": "Nađi partizanske zapovijedi", "type": "clue", "target": "clue_partisan_orders"},
-			{"id": "clue_mill", "text": "Pronađi dnevnik dolinje vodenice", "type": "clue", "target": "clue_mill_ledger"},
+			{"id": "weapon_mp40", "text": "Zaploti MP40", "type": "weapon", "target": 1},
+			{"id": "weapon_mg42", "text": "Zaploti MG42", "type": "weapon", "target": 2},
 			{"id": "clue_cipher", "text": "Dešifruj knjigu veza", "type": "clue", "target": "clue_cipher_logbook"},
 		],
 	},

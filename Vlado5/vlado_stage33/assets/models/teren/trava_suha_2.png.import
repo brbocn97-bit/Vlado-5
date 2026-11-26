@@ -7,9 +7,6 @@ path="res://.godot/imported/trava_suha_2.png-8186980a794033b4f7c13533da2e6546.ct
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "7c1e71d8b640b7663a0f651cdf3b5de6"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

@@ -109,7 +109,7 @@ func _build_kafana() -> void:
 	Stage4Buildings.furnish(house, "kafana", [{
 		"id": "clue_kafana_ledger",
 		"title": "Kafanska knjiga",
-		"body": "FIKCIJA MISIJE: „Nova patrola dolazi kroz selo i provjerava kuće. Sumnjivi tragovi vode prema borovoj šumi i starom mostu.“ Ovo nije istorijski citat.",
+		"body": "„Dvanaestog: dva kamiona, deset vojnika, oficir Hauptmann. Kažu da nova straža dolazi u petak. Punkt kod mosta traži pojačanje — dva mitraljeza na krovu stražarnice.“",
 	}])
 
 	# terrace awning + three outdoor tables

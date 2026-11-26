@@ -1,0 +1,19 @@
+VLADO SIPCIC — GODOT 4.7.2 ANDROID EDITOR READY
+
+OVAJ ZIP NIJE ZA DIREKTNO OTVARANJE.
+
+1. Raspakuj cijeli ZIP u internu memoriju, npr. Documents/VladoFaza6.
+2. Ne premještaj pojedinačne fajlove iz foldera.
+3. U Godot 4.7.2 Android izaberi Import, pa ovaj fajl:
+   VladoFaza6_AndroidEditor/project.godot
+4. Dozvoli Godotu pristup folderu kada Android pita.
+5. Prvo otvaranje može trajati nekoliko minuta. Ova verzija već sadrži pripremljen `.godot/imported` cache, pa telefon ne treba ponovo obrađivati kompletan arsenal i sve velike teksture.
+6. Obezbijedi najmanje 1 GB slobodnog prostora i ne zaključavaj ekran tokom prvog skeniranja.
+
+Ako se ponovo pojavi crni ekran:
+- potpuno zatvori Godot iz Recent Apps;
+- ponovo ga pokreni;
+- otvori isti project.godot, bez ponovnog raspakivanja;
+- ne briši `.godot` folder iz projekta.
+
+APK se ne otvara u Godotu. APK se instalira kao Android aplikacija.

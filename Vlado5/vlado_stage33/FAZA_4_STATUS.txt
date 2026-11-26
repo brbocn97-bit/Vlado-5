@@ -1,0 +1,30 @@
+VLADO SIPCIC: THE LAST OUTLAW — FAZA 4
+Datum: 2026-11-11
+Godot: 4.7.2 stable
+
+CILJ
+Dovršavanje funkcionalnog category-based weapon animation toka nakon rekonstruisanog Faza 3 checkpointa.
+
+URAĐENO
+- Vizuelno provjereni Gasser, rifle i heavy stateovi u stvarnom OpenGL renderu.
+- Prvobitni loši PistolReload iz osnovnog retarget seta je odbačen: lijeva šaka je odlazila iza glave.
+- PistolReload je ponovo offline baked; obje ruke ostaju uz Gasser bez istezanja i bez runtime IK-a.
+- WeaponArsenal.switch_to sada izvršava baked holster stare kategorije, zatim baked equip nove kategorije i tek potom vraća ready state.
+- Firing i reload akcije povezane su sa stvarnom municijom i arsenal timerima.
+
+AUTOMATSKI TESTOVI
+- Editor/import Godot 4.7.2: status 0.
+- Main runtime: 20 sekundi bez parse/script/compile/runtime grešaka; kontrolisano prekinut timeoutom.
+- 31-slot arsenal: PHASE3_31_DONE count=31 bad=0, status 0.
+- Switch state test: bad=0, status 0:
+  PistolHolster -> RifleEquip -> RifleIdle -> RifleHolster -> RifleEquip -> HeavyIdle.
+- Combat flow test: bad=0, status 0:
+  Gasser fire [6,36] -> [5,36], PistolFire;
+  Gasser reload -> [6,35], PistolReload;
+  Heavy fire [50,150] -> [49,150], HeavyFire.
+- OpenGL category render: status 0, 11/11 slika sa očekivanim stateovima.
+
+OGRANIČENJA
+- Reload animacije su stabilne generičke kategorijske animacije. Nijesu još zasebno mehanički precizne za svaki od 31 istorijskog modela.
+- Nije testirano na fizičkom Samsung Galaxy S25 Ultra uređaju.
+- Checkpoint nije finalni Android build niti završna igra.

@@ -12,7 +12,7 @@ extends Node
 ## Nothing in the Stage 3.2 scripts is modified.
 
 @export var auto_start := true
-@export var spawn_region_override := ""   # debug: "Crnca_Village", "PostWar_Checkpoint"...
+@export var spawn_region_override := ""   # debug: "Crnca_Village", "Axis_Checkpoint"...
 
 var world_node: Node3D
 var world: Stage4World
@@ -82,9 +82,9 @@ func _start() -> void:
 		world.teleport_to_region(spawn_region_override)
 
 
-	# Native renderer culling for sub-pixel props; no box impostors or watcher nodes.
-	var culled_prop_count := LodHelper.apply_to_tree(world, 220.0)
-	print("[Stage4] distance culling applied to %d small props (far=220m)" % culled_prop_count)
+	# distance LOD for the small props scattered across the six regions
+	var lod_count := LodHelper.apply_to_tree(world, 95.0, 340.0)
+	print("[Stage4] LOD proxies attached to %d props" % lod_count)
 
 	var qm := get_tree().root.get_node_or_null("QualityManager")
 	if qm and qm.has_method("apply"):

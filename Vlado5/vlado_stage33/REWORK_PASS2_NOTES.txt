@@ -1,0 +1,27 @@
+VLADO SIPCIC — FULL REWORK PASS 2
+==================================
+
+Built from the user's uploaded Vlado5_fixed (1).zip. Original upload was not modified.
+
+Implemented in this pass:
+- Reworked mobile combat controls into a responsive tactical/glass visual style.
+- Recalculated control positions/radii for different aspect ratios and screen sizes.
+- Added a tappable mini-map in the upper-left corner; tapping opens a large topographic overview and tapping outside/CLOSE returns to the mini-map.
+- Map includes cached sampled terrain elevation, six Stage 4 regions, route corridors and live player marker.
+- Moved the debug telemetry panel down to avoid overlapping the map.
+- Disabled automatic debug weapon pickups in the normal world start.
+- Reduced the oversaturated/oversized grass billboard appearance, grass count, wind intensity and grass draw distance.
+- Softened terrain shader contrast/specular and slightly softened fog/sun lighting.
+
+Preserved:
+- Character model and skeleton, Stage 2.1 locomotion animation resource, PlayerController, PlayerCamera,
+  PlayerAnimator, weapon controller/arsenal scripts and weapon GLB files were not intentionally edited.
+- Existing mission/world scripts and scene layout retained except the map UI mount and telemetry panel position.
+
+Important limitations:
+- This archive did not include the seven separate phase instruction TXT files mentioned in the agent conversation; it contains project documentation and Stage 3.3/4 reports. This pass is based on the uploaded project archive and the established requirements in the conversation.
+- No Godot 4.7.2 runtime is available in this environment. No import, boot, Android export, FPS, touch-input, visual or gameplay runtime test has been performed.
+- The map is a procedural topographic overview generated from the project's own terrain height function and Stage 4 site coordinates; it is not a surveyed real-world GIS map.
+- This is a substantial UI/visual pass, not a claim that every previously discussed feature is complete or verified.
+- Keep the original ZIP and test this archive as a separate project.
+Open: Vlado5/vlado_stage33/project.godot

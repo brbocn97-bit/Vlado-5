@@ -7,9 +7,6 @@ path="res://.godot/imported/gasser_m1870_2.png-c45a8bbdde938baad67a527fb360ef19.
 metadata={
 "vram_texture": false
 }
-generator_parameters={
-"md5": "2cbd2d4c2361c9d3535cfd134cfe202c"
-}
 
 [deps]
 
@@ -26,7 +23,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

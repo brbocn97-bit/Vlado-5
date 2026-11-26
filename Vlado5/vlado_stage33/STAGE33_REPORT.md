@@ -69,7 +69,7 @@ Radi: teren, 6 regija, terase, rijeka, vegetacija, streaming, zgrade,
 stražarnica, katun, interakcije, bilješke, NPC dijalog, teleport F5–F10.
 
 Ne radi / nije urađeno:
-- **neprijatelji** (`stage4/actors/`) — protivnici su postavljeni kao patrolne snage 1945+; nema njemačkih vojnika
+- **neprijatelji** (`stage4/actors/` je prazan) — nema njemačkih vojnika
 - **zadaci** — ledger broji bilješke, ali nema mission flow
 - **vodopadi** — kanjon ima rijeku, ali ne i vodopad
 - **ulaz u zgrade u FPS-u** — vrata rade, ali kamera u interijeru nije podešena
@@ -196,7 +196,7 @@ tools/serve_web.py, *.js     Web test harness
 ## 7. SLJEDEĆI KORACI (po prioritetu)
 
 1. **Pošalji `mp40.glb`** — jedan fajl, bez arhive (najbrže rješenje)
-2. **Neprijatelji** — `stage4/actors/`: post-ratne patrolne/pretresne snage + očuvani patrol AI + pucanje
+2. **Neprijatelji** — `stage4/actors/`: njemački vojnik + patrol AI + pucanje
 3. **Mission flow** — povezati 6 bilješki u zadatke sa ciljem
 4. **FPS modeli** — `BoneAttachment3D` na FPS skelet
 5. **Vodopadi** — kanjon + slap kod sjeverozapadne litice

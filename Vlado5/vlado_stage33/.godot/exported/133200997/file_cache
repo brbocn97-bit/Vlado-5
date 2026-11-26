@@ -1,8 +1,0 @@
-res://animations/vlado_fps.tres::0b4425b9bfca47a07f84cb8a61f7a611::1795196090::res://.godot/exported/133200997/export-05227eb25ce2fc0fcf1f3704d89ae5b0-vlado_fps.res
-res://animations/vlado_locomotion.tres::1f67394f0e0f8e825270c8abe7570497::1795196088::res://.godot/exported/133200997/export-2f58f52cebdb7426f466be399d599d2c-vlado_locomotion.res
-res://assets/characters/vlado/Vlado_Humanoid_BoneMap.tres::232b55e1b94acf15b5545568c39cfa64::1795196090::res://.godot/exported/133200997/export-012dc1cd0f9c4465106ab767a5ac7be3-Vlado_Humanoid_BoneMap.res
-res://characters/vlado/vlado_character.tscn::6ddb4e883978ddf04ed67f70bd2e078b::1795491355::res://.godot/exported/133200997/export-03c7c2cca7f70ab48034979b36a0b232-vlado_character.scn
-res://scenes/main/montenegro_world.tscn::8f0e237b8a7539c4e244878629065757::1795196090::res://.godot/exported/133200997/export-e17e00f90965a0e1983b0872e3e5c950-montenegro_world.scn
-res://scenes/main/stage1_test_world.tscn::f64a94962a6394efe040e2a39a498aad::1795196090::res://.godot/exported/133200997/export-da4aaccdba057e73f079b26e0751ccba-stage1_test_world.scn
-res://ui/debug_hud.tscn::ecbf94c9efa762ab7e31259b06181c51::1795196090::res://.godot/exported/133200997/export-3dcf2e493a26c03207ff949d96990502-debug_hud.scn
-res://ui/mobile_controls.tscn::1401f6616623e1d1b533c6a02cabfb07::1795196090::res://.godot/exported/133200997/export-9f65c7e2fb8b36b686abdbdbc1f4b92e-mobile_controls.scn

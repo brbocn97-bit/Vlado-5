@@ -33,12 +33,11 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 	var grass_mat := ShaderMaterial.new()
 	grass_mat.shader = load("res://shaders/vegetation_foliage.gdshader")
 	grass_mat.set_shader_parameter("albedo_tex", load("res://assets/textures/grass_tuft_albedo.png"))
-	# POPRAVKA: trava je izgledala crno. texture grass_tuft_albedo ima prosjek
-	# RGB 33/40/23 (tamno), a tint 1.22 nije dovoljan. Sada 2.05 + topliji ton.
-	grass_mat.set_shader_parameter("alpha_cutoff", 0.18)
-	grass_mat.set_shader_parameter("wind_strength", 0.09)
-	grass_mat.set_shader_parameter("wind_speed", 2.15)
-	grass_mat.set_shader_parameter("tint_color", Color(2.05, 2.00, 1.55))
+	# Prirodnija maslinasto-zelena: prethodni HDR tint je na telefonu pregorio u neon.
+	grass_mat.set_shader_parameter("alpha_cutoff", 0.30)
+	grass_mat.set_shader_parameter("wind_strength", 0.035)
+	grass_mat.set_shader_parameter("wind_speed", 1.10)
+	grass_mat.set_shader_parameter("tint_color", Color(0.82, 0.90, 0.68))
 
 	var pine_mesh := _build_pine_tree_mesh(bark_mat, pine_leaf_mat)
 	var beech_mesh := _build_beech_tree_mesh(bark_mat, beech_leaf_mat)
@@ -69,11 +68,32 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1944
 
+	# Stvarna gustina se bira prije generisanja prema aktivnom quality profilu.
+	# Time LOW smanjuje i CPU/RAM/instance count, ne samo vidljivu udaljenost.
+	var quality_tier := 1
+	var quality_manager := get_node_or_null("/root/QualityManager")
+	if quality_manager:
+		quality_tier = clampi(int(quality_manager.get("tier")), 0, 2)
+	var tree_attempts: int = [1900, 2700, 3400][quality_tier]
+	var tree_limit: int = [560, 820, 1050][quality_tier]
+	var shrub_attempts: int = [1200, 2200, 3200][quality_tier]
+	var grass_attempts: int = [18000, 34000, 50000][quality_tier]
+
+	# Android Godot editor dobija dodatno lakši preview da Play ne ostane crn.
+	var android_editor_preview := OS.get_name() == "Android" and OS.has_feature("editor")
+	if android_editor_preview:
+		tree_attempts = mini(tree_attempts, 1000)
+		tree_limit = mini(tree_limit, 300)
+		shrub_attempts = mini(shrub_attempts, 750)
+		grass_attempts = mini(grass_attempts, 10000)
+		print("[Vegetation] Android editor preview: reduced startup density")
+	print("[Vegetation] tier=%d trees=%d shrubs=%d grass_attempts=%d" % [quality_tier, tree_limit, shrub_attempts, grass_attempts])
+
 	# 1. Place dense conifers + mixed beech forests across foothills & valley groves
 	var placed_trees := 0
 	var trunk_shapes_added := 0
-	for _attempt in 3400:
-		if placed_trees >= 1050:
+	for _attempt in tree_attempts:
+		if placed_trees >= tree_limit:
 			break
 		var tx := rng.randf_range(-255.0, 255.0)
 		var tz := rng.randf_range(-255.0, 255.0)
@@ -120,7 +140,7 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 		placed_trees += 1
 
 	# 2. Place shrubs & forest undergrowth (around clearings, riverbanks, stone fences)
-	for _s in 3200:
+	for _s in shrub_attempts:
 		var sx := rng.randf_range(-165.0, 165.0)
 		var sz := rng.randf_range(-165.0, 165.0)
 		if data.get_road_info(sx, sz)["dist"] < 3.4 or data.get_trail_info(sx, sz)["dist"] < 2.1:
@@ -142,8 +162,8 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 	# 3. Place wild grass tufts: dense playable-valley meadow pass + wider hillside pass
 	# POPRAVKA: trava je bila rijetka (52000 pokusaja, tanke vlati od 0.22 m).
 	# Sada 92000 pokusaja sa naglaskom na prvih 120 m, gdje se stvarno gleda.
-	for _g in 92000:
-		var rad := 40.0 if _g < 12000 else (75.0 if _g < 30000 else (120.0 if _g < 52000 else (180.0 if _g < 70000 else (320.0 if _g < 84000 else 620.0))))
+	for _g in grass_attempts:
+		var rad := 40.0 if _g < 8000 else (75.0 if _g < 19000 else (120.0 if _g < 35000 else (180.0 if _g < 48000 else (320.0 if _g < 57000 else 620.0))))
 		var gx := rng.randf_range(-rad, rad)
 		var gz := rng.randf_range(-rad, rad)
 		if data.get_road_info(gx, gz)["dist"] < 2.25 or data.get_trail_info(gx, gz)["dist"] < 1.2:
@@ -158,7 +178,7 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 		var gy := data.get_height(gx, gz)
 		if gy > 62.0 or data.get_slope_deg(gx, gz) > 34.0:
 			continue
-		var sc := rng.randf_range(0.85, 1.52)
+		var sc := rng.randf_range(0.62, 1.08)
 		var xf := Transform3D(Basis.from_euler(Vector3(0.0, rng.randf_range(0.0, TAU), 0.0)).scaled(Vector3(sc, sc * rng.randf_range(0.85, 1.2), sc)), Vector3(gx, gy - 0.04, gz))
 		grass_buckets[_chunk_index_grid(gx, gz, 8)].append(xf)
 
@@ -185,7 +205,7 @@ func build_vegetation(data: MontenegroTerrainData) -> void:
 
 func apply_quality_scale(tier: int) -> void:
 	# 0=Low, 1=Medium, 2=High
-	var grass_dist := 68.0 if tier == 0 else (85.0 if tier == 1 else 105.0)
+	var grass_dist := 52.0 if tier == 0 else (68.0 if tier == 1 else 88.0)
 	var shrub_dist := 92.0 if tier == 0 else (112.0 if tier == 1 else 135.0)
 	var far_tree_dist := 260.0 if tier == 0 else (320.0 if tier == 1 else 380.0)
 	for g in grass_chunks:
@@ -374,15 +394,16 @@ func _build_shrub_mesh(leaf_mat: Material) -> ArrayMesh:
 	return m
 
 func _build_grass_tuft_mesh(grass_mat: Material) -> ArrayMesh:
-	# Keep individual tufts below knee height and narrow enough to avoid a
-	# billboard-card look in the foreground.
+	# Prava vlat trave je USKA i VISOKA.
+	# Prije: hw=0.44 (sirina 0.88 m), h=0.46 -> izgledalo kao ploca na zemlji.
+	# Sada:  hw=0.11 (sirina 0.22 m), h=0.62 -> izgleda kao busen trave.
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for i in 4:
 		var ang := float(i) * (PI / 4.0)
 		var b := Basis.from_euler(Vector3(0.0, ang, 0.0))
-		var hw := 0.09
-		var h := 0.48
+		var hw := 0.075
+		var h := 0.40
 		var p0 := b * Vector3(-hw, 0.0, 0.0)
 		var p1 := b * Vector3(hw, 0.0, 0.0)
 		var p2 := b * Vector3(hw, h, 0.0)
