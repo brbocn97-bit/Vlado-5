@@ -1,0 +1,16 @@
+{
+  "name": "Vlado Godot Rebuild",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "postCreateCommand": "bash .devcontainer/install-tools.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "files.exclude": {
+          "**/.godot": true,
+          "**/build": true,
+          "**/dist": true
+        }
+      }
+    }
+  }
+}
