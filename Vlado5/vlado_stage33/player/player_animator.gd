@@ -56,7 +56,6 @@ func _ready() -> void:
 	if model_root:
 		_anim_player = model_root.find_child("AnimationPlayer", true, false)
 		_skel = model_root.find_child("Skeleton3D", true, false)
-		_configure_character_materials(model_root)
 
 	if _anim_player and _skel:
 		_cache_skeleton_indices()
@@ -140,7 +139,28 @@ func _setup_animation_tree() -> void:
 	add_child(_anim_tree)
 
 	var sm := AnimationNodeStateMachine.new()
-	var state_to_clip := {"Idle":"Idle","Walking":"Walking","Running":"Running","Sprinting":"Sprinting","CrouchIdle":"CrouchIdle","CrouchWalk":"Crouching","JumpStart":"JumpStart","Jumping":"Jumping","Landing":"Landing"}
+	var state_to_clip := {}
+	var original_clips: Dictionary = {
+		"Idle": "idle",
+		"Walking": "run",
+		"Running": "run",
+		"Sprinting": "run",
+		"CrouchIdle": "idle",
+		"CrouchWalk": "run",
+		"JumpStart": "jump_in_place",
+		"Jumping": "jump_in_place",
+		"Landing": "jump_in_place",
+		"RifleIdle": "idle_rifle",
+		"RifleWalk": "run_rifle",
+		"RifleRun": "run_rifle",
+		"HeavyIdle": "idle_rifle",
+		"HeavyWalk": "run_rifle",
+		"ArmedJump": "jump_rifle_in_place",
+	}
+	for state_name in original_clips.keys():
+		var clip_name: String = original_clips[state_name]
+		if _anim_player.has_animation(clip_name):
+			state_to_clip[state_name] = clip_name
 	for combat_st in ["PistolIdle","PistolAim","PistolFire","PistolReload","PistolWalk","PistolRun","PistolEquip","PistolHolster","RifleIdle","RifleAim","RifleWalk","RifleRun","HeavyIdle","HeavyWalk","RifleEquip","RifleHolster","RifleFire","HeavyFire","RifleReload","GrenadeIdle","GrenadeThrow","MeleeIdle","MeleeAttack"]:
 		if _anim_player.has_animation(combat_st): state_to_clip[combat_st] = combat_st
 
@@ -234,29 +254,20 @@ func _setup_animation_tree() -> void:
 func _resolve_target_state() -> String:
 	var loco: String = _controller.current_locomotion_state
 	if loco in ["JumpStart", "Jumping", "Landing"]:
-		return loco
+		if _controller.weapon_equipped and _active_hold_style in ["rifle", "heavy", "m48"]:
+			return "ArmedJump"
+		return "Jumping" if loco != "Landing" else "Landing"
 
 	var act: String = _controller.weapon_action
 	var speed := _controller.current_horizontal_speed
 	if _controller.weapon_equipped:
 		if _active_hold_style == "pistol":
-			if act == "Equip": return "PistolEquip"
-			if act == "Holster": return "PistolHolster"
-			if act == "Reload": return "PistolReload"
-			if act == "Fire": return "PistolFire"
-			if _controller.is_aiming: return "PistolAim"
-			if speed < 0.14: return "PistolIdle"
-			return "PistolWalk" if speed < 2.2 else "PistolRun"
+			# Custom pistol clips are intentionally not fabricated or substituted.
+			return "Idle"
 		if _active_hold_style == "grenade":
-			if act == "Equip": return "PistolEquip"
-			if act == "Holster": return "PistolHolster"
-			if act == "Fire": return "GrenadeThrow"
-			return "GrenadeIdle"
+			return "Idle"
 		if _active_hold_style == "melee":
-			if act == "Equip": return "PistolEquip"
-			if act == "Holster": return "PistolHolster"
-			if act == "Fire": return "MeleeAttack"
-			return "MeleeIdle"
+			return "Idle"
 		if _active_hold_style in ["rifle", "heavy", "m48"]:
 			if act == "Equip": return "RifleEquip"
 			if act == "Holster": return "RifleHolster"

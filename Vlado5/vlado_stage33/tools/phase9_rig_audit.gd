@@ -7,7 +7,7 @@ func _init() -> void:
 	call_deferred("_run")
 
 func _run() -> void:
-	var scene: PackedScene = load("res://assets/characters/vlado/Vlado_Sipcic_ReRigged.glb")
+	var scene: PackedScene = load("res://assets/characters/vlado/vlado_sipcic.glb")
 	var model: Node = scene.instantiate()
 	root.add_child(model)
 	await process_frame

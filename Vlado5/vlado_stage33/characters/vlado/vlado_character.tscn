@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" uid="uid://dsbt5inom4n4v" path="res://player/player_controller.gd" id="1_ctrl"]
-[ext_resource type="PackedScene" path="res://assets/characters/vlado/Vlado_Sipcic_ReRigged.glb" id="2_vlado"]
+[ext_resource type="PackedScene" path="res://assets/characters/vlado/vlado_sipcic.glb" id="2_vlado"]
 [ext_resource type="Script" uid="uid://b3a7gyy3d2ukp" path="res://player/player_camera.gd" id="3_cam"]
 [ext_resource type="Script" uid="uid://dsqtxtbfshjr0" path="res://player/player_animator.gd" id="4_anim"]
 [ext_resource type="Script" uid="uid://47qxpdpm887s" path="res://scripts/weapon_controller.gd" id="5_weap"]

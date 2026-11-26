@@ -1,14 +1,16 @@
 extends Node
 
-signal graphics_changed(settings: GraphicsSettings)
+const GraphicsSettingsScript = preload("res://resources/graphics_settings.gd")
 
-var graphics: GraphicsSettings = GraphicsSettings.create_preset(GraphicsSettings.QualityTier.HIGH_S25_ULTRA)
+signal graphics_changed(settings: Resource)
+
+var graphics: Resource = GraphicsSettingsScript.create_preset(GraphicsSettingsScript.QualityTier.HIGH_S25_ULTRA)
 
 func _ready() -> void:
 	# Apply baseline viewport scaling/MSAA settings at startup.
 	apply_graphics_to_scene()
 
-func set_quality_tier(tier: GraphicsSettings.QualityTier) -> void:
+func set_quality_tier(tier) -> void:
 	graphics = GraphicsSettings.create_preset(tier)
 	apply_graphics_to_scene()
 	graphics_changed.emit(graphics)

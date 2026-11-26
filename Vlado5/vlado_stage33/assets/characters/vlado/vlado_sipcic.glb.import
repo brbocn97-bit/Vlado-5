@@ -3,13 +3,10 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://lteglmu1h760"
-path="res://.godot/imported/Vlado_Sipcic_ReRigged.glb-a2aeba0279f6d0164d080c7bc736f75b.scn"
 
 [deps]
 
-source_file="res://assets/characters/vlado/Vlado_Sipcic_ReRigged.glb"
-dest_files=["res://.godot/imported/Vlado_Sipcic_ReRigged.glb-a2aeba0279f6d0164d080c7bc736f75b.scn"]
+source_file="res://assets/characters/vlado/vlado_sipcic.glb"
 
 [params]
 

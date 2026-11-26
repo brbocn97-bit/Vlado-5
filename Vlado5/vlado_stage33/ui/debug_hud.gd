@@ -191,7 +191,7 @@ func _on_cycle_quality() -> void:
 	_current_tier = (_current_tier + 1) % 3
 	var gm := get_node_or_null("/root/GameManager")
 	if gm:
-		gm.set_quality_tier(_current_tier as GraphicsSettings.QualityTier)
+		gm.set_quality_tier(_current_tier)
 	if _vegetation:
 		_vegetation.apply_quality_scale(_current_tier)
 	_quality_btn.text = "Quality: " + _tier_names[_current_tier]
