@@ -14,6 +14,7 @@ const FPS_RUN_REF := 4.35
 const FPS_SPRINT_REF := 6.40
 const EYE_OFFSET_IN_SKEL := Vector3(0.0, -1.690, 0.060)
 const MUZZLE_LOCAL_ON_WM := Vector3(-0.007, 0.680, 0.022)
+const VladoRigCompat = preload("res://characters/vlado/vlado_rig_compat.gd")
 
 var _controller: PlayerController
 var _camera_rig: PlayerCamera
@@ -141,7 +142,7 @@ func _load_fps_rig_and_animations() -> void:
 	_fps_ap = _fps_model.find_child("AnimationPlayer", true, false) as AnimationPlayer
 	var body_mi := _fps_model.find_child("Vlado_Body", true, false) as MeshInstance3D
 	var hair_mi := _fps_model.find_child("Vlado_Hair", true, false) as MeshInstance3D
-	var rifle_mi := _fps_model.find_child("Rifle_BoltAction", true, false) as MeshInstance3D
+	var rifle_mi := _find_rifle_prop(_fps_model)
 
 	if _fps_skel and body_mi and body_mi.mesh:
 		body_mi.mesh = _build_fps_arms_mesh(_fps_skel, body_mi)
@@ -159,7 +160,7 @@ func _load_fps_rig_and_animations() -> void:
 		rifle_mi.extra_cull_margin = 2.0
 
 	if _fps_skel:
-		_wm_idx = _fps_skel.find_bone("WeaponMount")
+		_wm_idx = VladoRigCompat.weapon_socket_index(_fps_skel)
 
 	_build_fps_muzzle_fx()
 	_setup_fps_animation_tree()
@@ -203,6 +204,12 @@ func _build_fps_arms_mesh(skel: Skeleton3D, body_mi: MeshInstance3D) -> ArrayMes
 	if mat:
 		arm_mesh.surface_set_material(0, mat)
 	return arm_mesh
+
+func _find_rifle_prop(model: Node) -> MeshInstance3D:
+	var rifle := model.find_child("Rifle_Prop", true, false) as MeshInstance3D
+	if rifle == null:
+		rifle = model.find_child("Rifle_BoltAction", true, false) as MeshInstance3D
+	return rifle
 
 func _build_fps_muzzle_fx() -> void:
 	_muzzle_light = OmniLight3D.new()
@@ -491,9 +498,10 @@ func get_active_animation() -> String:
 # STAGE 3.3 — FPS weapon mounting
 # ----------------------------------------------------------------------------
 # The first-person rig renders through its own SubViewport with its own copy of
-# Vlado, which already carries the skinned M48 mesh ("Rifle_BoltAction"). The
+# Vlado, which carries the rifle prop (`Rifle_Prop` in the original GLB). The
 # captured weapons are separate GLBs, so they need their own attachment on this
-# rig's WeaponMount bone. Nothing above this block is modified: the addon only
+# rig's WeaponSocket bone (or legacy WeaponMount). The FPS copy and third-person
+# model remain separate instances.
 # adds a second attachment and a visibility switch.
 # ============================================================================
 var _fps_weapon_attach: BoneAttachment3D
@@ -509,9 +517,9 @@ func fp_mount_weapon(weapon_id: String, model: Node3D, rot_deg: Vector3, offset:
 		return false
 	if _fps_weapon_attach == null:
 		if _wm_idx < 0:
-			_wm_idx = _fps_skel.find_bone("WeaponMount")
+			_wm_idx = VladoRigCompat.weapon_socket_index(_fps_skel)
 		if _wm_idx < 0:
-			push_warning("Stage33: FPS skeleton has no WeaponMount bone")
+			push_warning("Stage33: FPS skeleton has no WeaponSocket or legacy WeaponMount bone")
 			return false
 		_fps_weapon_attach = BoneAttachment3D.new()
 		_fps_weapon_attach.name = "FPSWeaponAttach"
@@ -542,14 +550,14 @@ func fp_show_weapon(weapon_id: String) -> void:
 		var n: Node3D = _fps_weapon_models[k]
 		if is_instance_valid(n):
 			n.visible = (k == weapon_id)
-	# the M48 is part of Vlado's GLB; hide it while a captured gun is out
+	# The original rifle prop is part of the FPS model; hide it while a captured gun is out.
 	_set_fp_rifle_visible(weapon_id == "")
 
 
 func _set_fp_rifle_visible(v: bool) -> void:
 	if _fps_model == null:
 		return
-	var rifle := _fps_model.find_child("Rifle_BoltAction", true, false) as MeshInstance3D
+	var rifle := _find_rifle_prop(_fps_model)
 	if rifle:
 		rifle.visible = v
 

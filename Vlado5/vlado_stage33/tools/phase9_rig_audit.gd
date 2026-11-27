@@ -1,7 +1,7 @@
 extends SceneTree
 
-const REQUIRED_BONES := ["Root","Hips","Spine","Chest","UpperChest","Neck","Head","LeftShoulder","LeftUpperArm","LeftLowerArm","LeftHand","RightShoulder","RightUpperArm","RightLowerArm","RightHand","LeftUpperLeg","LeftLowerLeg","LeftFoot","LeftToes","RightUpperLeg","RightLowerLeg","RightFoot","RightToes","WeaponMount"]
-const REQUIRED_ANIMS := ["Idle","Walking","Running","Sprinting","Crouching","Jumping","RifleIdle","RifleAim","RifleFire","RifleReload","PistolIdle","PistolAim","PistolFire","GrenadeThrow","MeleeAttack"]
+const REQUIRED_BONES := ["Root","Hips","Spine","Chest","UpperChest","Neck","Head","Shoulder.L","UpperArm.L","LowerArm.L","Hand.L","Shoulder.R","UpperArm.R","LowerArm.R","Hand.R","UpperLeg.L","LowerLeg.L","Foot.L","Toes.L","UpperLeg.R","LowerLeg.R","Foot.R","Toes.R","WeaponSocket"]
+const REQUIRED_ANIMS := ["idle","idle_rifle","run","run_rifle","jump","jump_in_place","jump_rifle","jump_rifle_in_place"]
 
 func _init() -> void:
 	call_deferred("_run")
@@ -25,7 +25,7 @@ func _run() -> void:
 		if not ap.has_animation(anim_name):
 			bad += 1
 			print("PHASE9_RIG_MISSING_ANIM " + anim_name)
-	var symmetry_pairs := [["LeftUpperArm","RightUpperArm"],["LeftLowerArm","RightLowerArm"],["LeftUpperLeg","RightUpperLeg"],["LeftLowerLeg","RightLowerLeg"],["LeftFoot","RightFoot"]]
+	var symmetry_pairs := [["UpperArm.L","UpperArm.R"],["LowerArm.L","LowerArm.R"],["UpperLeg.L","UpperLeg.R"],["LowerLeg.L","LowerLeg.R"],["Foot.L","Foot.R"]]
 	for pair in symmetry_pairs:
 		var li := skel.find_bone(pair[0])
 		var ri := skel.find_bone(pair[1])

@@ -1,7 +1,7 @@
 extends SceneTree
 
 var bad := 0
-var player: Node
+var player: PlayerController
 
 func _init() -> void:
 	call_deferred("_run")
@@ -28,7 +28,14 @@ func _run() -> void:
 	floor_shape.position.y = -0.25
 	floor_body.add_child(floor_shape)
 
-	player = load("res://characters/vlado/vlado_character.tscn").instantiate() as Node
+	var player_instance: PlayerController = load(
+		"res://characters/vlado/vlado_character.tscn"
+	).instantiate() as PlayerController
+	if player_instance == null:
+		push_error("Vlado player prefab is not a PlayerController")
+		quit(1)
+		return
+	player = player_instance
 	world.add_child(player)
 	await _physics_frames(20)
 	_check("grounded", player.is_on_floor(), "y=%.3f" % player.global_position.y)

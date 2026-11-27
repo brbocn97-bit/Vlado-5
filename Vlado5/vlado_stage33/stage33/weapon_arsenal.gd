@@ -17,6 +17,7 @@ const SLOT_MP40 := 1
 const SLOT_MG42 := 2
 const SLOT_GASSER := 3
 
+const VladoRigCompat = preload("res://characters/vlado/vlado_rig_compat.gd")
 const MODEL_DIR := "res://assets/weapons/Models/"
 const RECOVERED_DIR := "res://assets/weapons/Recovered/"
 
@@ -222,18 +223,32 @@ func _std_def(slot_i: int, wid: String, dname: String, cat: String, cal: String,
 
 # ------------------------------------------------------------------ holding
 func _mount_root_for_weapon() -> Node3D:
-	if _mount_root and is_instance_valid(_mount_root):
-		return _mount_root
-	_mount_root = Node3D.new()
-	_mount_root.name = "Stage33WeaponMount"
+	if _mount_root == null or not is_instance_valid(_mount_root):
+		_mount_root = Node3D.new()
+		_mount_root.name = "Stage33WeaponMount"
+	if _skel == null and player:
+		_skel = player.find_child("Skeleton3D", true, false) as Skeleton3D
 	if _skel:
 		var socket := _skel.get_node_or_null("RightHandWeaponSocket") as BoneAttachment3D
 		if socket == null:
-			socket = BoneAttachment3D.new(); socket.name = "RightHandWeaponSocket"; socket.bone_name = &"RightHand"; _skel.add_child(socket)
-		socket.add_child(_mount_root)
+			socket = BoneAttachment3D.new()
+			socket.name = "RightHandWeaponSocket"
+			var hand_index := VladoRigCompat.right_hand_index(_skel)
+			if hand_index < 0:
+				push_warning("Weapon arsenal: skeleton has no Hand.R or legacy RightHand bone")
+				return _mount_root
+			socket.bone_name = _skel.get_bone_name(hand_index)
+			_skel.add_child(socket)
+		if _mount_root.get_parent() != socket:
+			if _mount_root.get_parent():
+				_mount_root.get_parent().remove_child(_mount_root)
+			socket.add_child(_mount_root)
 		var anim := _animator_ref()
 		if anim: anim.set_weapon_mount_node(_mount_root)
-	elif player: player.add_child(_mount_root)
+	elif player and _mount_root.get_parent() != player:
+		if _mount_root.get_parent():
+			_mount_root.get_parent().remove_child(_mount_root)
+		player.add_child(_mount_root)
 	return _mount_root
 
 

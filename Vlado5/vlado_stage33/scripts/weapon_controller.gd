@@ -1,6 +1,8 @@
 class_name WeaponController
 extends Node
 
+const VladoRigCompat = preload("res://characters/vlado/vlado_rig_compat.gd")
+
 enum State {
 	HOLSTERED = 0,
 	EQUIPPING = 1,
@@ -61,7 +63,7 @@ func _ready() -> void:
 		_skel = _controller.find_child("Skeleton3D", true, false) as Skeleton3D
 		_fp_rig = _controller.find_child("FirstPersonRig", true, false) as FirstPersonRig
 		if _skel:
-			_wm_idx = _skel.find_bone("WeaponMount")
+			_wm_idx = VladoRigCompat.weapon_socket_index(_skel)
 	_sound = get_tree().root.find_child("SoundManager", true, false) as SoundManager
 	_sync_player_flags()
 	ammo_changed.emit(mag_ammo, reserve_ammo, mag_capacity)

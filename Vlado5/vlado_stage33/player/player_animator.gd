@@ -1,6 +1,8 @@
 class_name PlayerAnimator
 extends Node
 
+const VladoRigCompat = preload("res://characters/vlado/vlado_rig_compat.gd")
+
 @export var controller_path: NodePath = NodePath("..")
 @export var model_root_path: NodePath = NodePath("../VisualRoot/VladoModel")
 @export var visual_root_path: NodePath = NodePath("../VisualRoot")
@@ -34,11 +36,9 @@ var _chest_idx: int = -1
 var _upper_chest_idx: int = -1
 var _wm_idx: int = -1
 var _rh_idx: int = -1
-var _wm_rel_chest: Transform3D = Transform3D.IDENTITY
 var _rifle_mi: MeshInstance3D = null
 var _rifle_home: Transform3D = Transform3D.IDENTITY
 var _rifle_attached := false
-var _has_wm_offset: bool = false
 
 var _active_hold_style: String = "pistol"
 var _weapon_mount_node: Node3D = null
@@ -118,19 +118,8 @@ func _cache_skeleton_indices() -> void:
 	_spine_idx = _skel.find_bone("Spine")
 	_chest_idx = _skel.find_bone("Chest")
 	_upper_chest_idx = _skel.find_bone("UpperChest")
-	_wm_idx = _skel.find_bone("WeaponMount")
-	_rh_idx = _skel.find_bone("RightHand")
-	if _upper_chest_idx != -1 and _wm_idx != -1:
-		var prev_cb := _anim_player.callback_mode_process
-		_anim_player.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_MANUAL
-		var idle_clip := "vlado_loco/Idle" if _anim_player.has_animation("vlado_loco/Idle") else "Idle"
-		_anim_player.play(idle_clip)
-		_anim_player.seek(0.0, true)
-		_anim_player.advance(0.0)
-		_wm_rel_chest = _skel.get_bone_global_pose(_upper_chest_idx).affine_inverse() * _skel.get_bone_global_pose(_wm_idx)
-		_has_wm_offset = true
-		_anim_player.stop()
-		_anim_player.callback_mode_process = prev_cb
+	_wm_idx = VladoRigCompat.weapon_socket_index(_skel)
+	_rh_idx = VladoRigCompat.right_hand_index(_skel)
 	_find_rifle()
 
 func _setup_animation_tree() -> void:
@@ -175,22 +164,20 @@ func _setup_animation_tree() -> void:
 	sm.add_transition("Start", "Idle", tr_start)
 
 	var grounded_states := ["Idle", "Walking", "Running", "Sprinting", "CrouchIdle", "CrouchWalk"]
-	if state_to_clip.has("ArmedJump"):
-		var jump_tr := AnimationNodeStateMachineTransition.new()
-		jump_tr.xfade_time = 0.08
-		for g in grounded_states:
-			sm.add_transition(g, "ArmedJump", jump_tr)
-		var armed_landing_tr := AnimationNodeStateMachineTransition.new()
-		armed_landing_tr.xfade_time = 0.12
-		sm.add_transition("ArmedJump", "Landing", armed_landing_tr)
-		var landing_armed_tr := AnimationNodeStateMachineTransition.new()
-		landing_armed_tr.xfade_time = 0.12
-		sm.add_transition("Landing", "ArmedJump", landing_armed_tr)
 	var combat_states := ["PistolIdle","PistolAim","PistolFire","PistolReload","PistolWalk","PistolRun","PistolEquip","PistolHolster","RifleIdle","RifleAim","RifleWalk","RifleRun","HeavyIdle","HeavyWalk","RifleEquip","RifleHolster","RifleFire","HeavyFire","RifleReload","GrenadeIdle","GrenadeThrow","MeleeIdle","MeleeAttack"]
 	var all_grounded := grounded_states.duplicate()
 	for cs in combat_states:
 		if state_to_clip.has(cs):
 			all_grounded.append(cs)
+
+	if state_to_clip.has("ArmedJump"):
+		var jump_tr := AnimationNodeStateMachineTransition.new()
+		jump_tr.xfade_time = 0.08
+		for g in all_grounded:
+			sm.add_transition(g, "ArmedJump", jump_tr)
+		var armed_landing_tr := AnimationNodeStateMachineTransition.new()
+		armed_landing_tr.xfade_time = 0.12
+		sm.add_transition("ArmedJump", "Landing", armed_landing_tr)
 
 	for a in all_grounded:
 		for b in all_grounded:
@@ -264,10 +251,12 @@ func _setup_animation_tree() -> void:
 
 func _resolve_target_state() -> String:
 	var loco: String = _controller.current_locomotion_state
-	if loco in ["JumpStart", "Jumping", "Landing"]:
+	if loco == "Landing":
+		return "Landing"
+	if loco in ["JumpStart", "Jumping"]:
 		if _controller.weapon_equipped and _active_hold_style in ["rifle", "heavy", "m48"]:
 			return "ArmedJump"
-		return "Jumping" if loco != "Landing" else "Landing"
+		return "Jumping"
 
 	var act: String = _controller.weapon_action
 	var speed := _controller.current_horizontal_speed
