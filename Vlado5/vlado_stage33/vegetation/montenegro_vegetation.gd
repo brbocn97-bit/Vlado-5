@@ -10,10 +10,10 @@ var tree_far_chunks: Array[MultiMeshInstance3D] = []
 
 func build_vegetation(data: MontenegroTerrainData) -> void:
 	var bark_mat := StandardMaterial3D.new()
-	bark_mat.albedo_texture = load("res://assets/textures/pine_bark_albedo.png")
+	bark_mat.albedo_texture = load("res://assets/materials/polyhaven/pine_bark/albedo.jpg")
 	bark_mat.normal_enabled = true
-	bark_mat.normal_texture = load("res://assets/textures/pine_bark_normal.png")
-	bark_mat.roughness = 0.92
+	bark_mat.normal_texture = load("res://assets/materials/polyhaven/pine_bark/normal_gl.jpg")
+	bark_mat.roughness_texture = load("res://assets/materials/polyhaven/pine_bark/roughness.jpg")
 	bark_mat.uv1_scale = Vector3(1.0, 2.5, 1.0)
 
 	var pine_leaf_mat := ShaderMaterial.new()

@@ -117,11 +117,11 @@ func _add_rock_multimesh(node_name: String, mesh: Mesh, xforms: Array[Transform3
 
 func _create_rock_material() -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
-	mat.albedo_texture = load("res://assets/textures/terrain_limestone_albedo.png")
+	mat.albedo_texture = load("res://assets/materials/polyhaven/rock_01/albedo.jpg")
 	mat.normal_enabled = true
-	mat.normal_texture = load("res://assets/textures/terrain_limestone_normal.png")
+	mat.normal_texture = load("res://assets/materials/polyhaven/rock_01/normal_gl.jpg")
 	mat.normal_scale = 1.15
-	mat.roughness = 0.88
+	mat.roughness_texture = load("res://assets/materials/polyhaven/rock_01/roughness.jpg")
 	mat.metallic = 0.0
 	mat.uv1_scale = Vector3(2.4, 2.4, 2.4)
 	return mat

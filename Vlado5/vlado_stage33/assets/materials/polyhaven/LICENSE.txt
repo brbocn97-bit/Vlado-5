@@ -1,0 +1,12 @@
+Poly Haven CC0 assets
+Source: https://polyhaven.com/
+License: CC0 1.0 Universal
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+Included assets:
+- brown_mud_02
+- rock_01
+- pine_bark
+- old_stone_wall
+- grass_ground
+- forest_ground_04

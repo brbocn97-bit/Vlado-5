@@ -53,11 +53,11 @@ func build_settlement(data: MontenegroTerrainData) -> void:
 
 func _init_materials() -> void:
 	_stone_mat = StandardMaterial3D.new()
-	_stone_mat.albedo_texture = load("res://assets/textures/stone_wall_albedo.png")
+	_stone_mat.albedo_texture = load("res://assets/materials/polyhaven/old_stone_wall/albedo.jpg")
 	_stone_mat.normal_enabled = true
-	_stone_mat.normal_texture = load("res://assets/textures/stone_wall_normal.png")
+	_stone_mat.normal_texture = load("res://assets/materials/polyhaven/old_stone_wall/normal_gl.jpg")
 	_stone_mat.normal_scale = 1.2
-	_stone_mat.roughness = 0.90
+	_stone_mat.roughness_texture = load("res://assets/materials/polyhaven/old_stone_wall/roughness.jpg")
 	_stone_mat.uv1_triplanar = true
 	_stone_mat.uv1_scale = Vector3(0.35, 0.35, 0.35)
 

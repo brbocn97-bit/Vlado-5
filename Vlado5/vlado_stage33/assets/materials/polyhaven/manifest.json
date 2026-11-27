@@ -1,0 +1,38 @@
+{
+  "source": "https://polyhaven.com/",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "resolution": "1k",
+  "assets": [
+    {
+      "name": "grass_ground",
+      "source": "https://polyhaven.com/a/grass_ground",
+      "usage": "grass terrain splat"
+    },
+    {
+      "name": "forest_ground_04",
+      "source": "https://polyhaven.com/a/forest_ground_04",
+      "usage": "forest-floor terrain splat"
+    },
+    {
+      "name": "pine_bark",
+      "source": "https://polyhaven.com/a/pine_bark",
+      "usage": "pine trunks, beech trunks, and fallen logs"
+    },
+    {
+      "name": "brown_mud_02",
+      "source": "https://polyhaven.com/a/brown_mud_02",
+      "usage": "dirt-road terrain"
+    },
+    {
+      "name": "rock_01",
+      "source": "https://polyhaven.com/a/rock_01",
+      "usage": "terrain rock splat and procedural karst formations"
+    },
+    {
+      "name": "old_stone_wall",
+      "source": "https://polyhaven.com/a/old_stone_wall",
+      "usage": "traditional stone houses and dry-stone walls"
+    }
+  ]
+}
